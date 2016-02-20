@@ -10,3 +10,5 @@
 
 # Virtualenv folder
 /venv
+
+.tox/
