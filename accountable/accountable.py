@@ -31,7 +31,7 @@ class Accountable(object):
         if not os.path.exists(self.CONFIG_DIR):
             click.echo('Creating {}'.format(self.CONFIG_DIR))
             os.makedirs(self.CONFIG_DIR)
-    
+
     def _create_config(self, username, password, domain):
         self._create_config_dir()
         config = {'username': username, 'password': password, 'domain': domain}
@@ -45,11 +45,15 @@ class Accountable(object):
         return config
 
     def projects(self):
-        return [(project['key'], project['name']) for project in self.metadata['projects']]
+        return [(project['key'],
+                 project['name']) for project in self.metadata['projects']]
 
     def issue_types(self, project_key):
         if project_key:
-            project = next(project for project in self.metadata['projects'] if project['key'] == str(project_key))
+            project = next(
+                project for project in self.metadata['projects']
+                if project['key'] == str(project_key)
+            )
             return {project_key: project['issuetypes']}
         else:
             issue_types = {}

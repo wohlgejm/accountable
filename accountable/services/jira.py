@@ -17,5 +17,6 @@ class Jira(object):
         return '{}/issue/createmeta'.format(self.endpoint)
 
     def metadata(self):
-        r = requests.get(self.metadata_endpoint, auth=HTTPBasicAuth(self.username, self.password))
+        r = requests.get(self.metadata_endpoint,
+                         auth=HTTPBasicAuth(self.username, self.password))
         return r.json()

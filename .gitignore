@@ -12,3 +12,5 @@
 /venv
 
 .tox/
+.ropeproject
+.cache

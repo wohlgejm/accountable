@@ -13,10 +13,10 @@ def cli():
 @click.option('--password', prompt='Your Jira password', hide_input=True)
 @click.option('--domain', prompt='The base url of your Jira account')
 def configure(username, password, domain):
-    accountable = Accountable(username=username,
-                              password=password,
-                              domain=domain,
-                              create_config=True)
+    Accountable(username=username,
+                password=password,
+                domain=domain,
+                create_config=True)
 
 
 @click.command()
@@ -34,7 +34,10 @@ def issuetypes(project_key):
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
         for i in issue_types:
-            click.echo('{} - {} - {} - {}'.format(key, i['id'], i['name'], i['description']))
+            click.echo('{} - {} - {} - {}'.format(key,
+                                                  i['id'],
+                                                  i['name'],
+                                                  i['description']))
 
 
 cli.add_command(configure)
