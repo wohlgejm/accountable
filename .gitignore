@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+
+/dist/
+/*.egg-info
+/build
+
+*.swp
+*.swo
+
+# Virtualenv folder
+/venv
