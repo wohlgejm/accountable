@@ -1,6 +1,9 @@
 =================================
 Accountable - a Jira CLI (Alpha)
 =================================
+.. image:: https://travis-ci.org/wohlgejm/accountable.svg?branch=master
+    :target: https://travis-ci.org/wohlgejm/accountable
+.. image:: https://coveralls.io/repos/github/wohlgejm/accountable/badge.svg?branch=master :target: https://coveralls.io/github/wohlgejm/accountable?branch=master
 
 Never leave the command line to update a ticket again!
 
