@@ -1,9 +1,8 @@
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-# To use a consistent encoding
 
 setup(
-    name='sample',
+    name='accountable',
     version='0.1',
     description='Command line tools for interacting with JIRA',
     url='https://github.com/wohlgejm/accountable',
@@ -12,7 +11,7 @@ setup(
     license='MIT',
     keywords='jira',
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=[''],
+    install_requires=['click', 'requests', 'pyaml'],
     entry_points='''
         [console_scripts]
         accountable=accountable.cli:cli
