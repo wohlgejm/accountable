@@ -1,6 +1,8 @@
+from __future__ import absolute_import
+
 import click
 
-from accountable import Accountable
+from accountable.accountable import Accountable
 
 
 @click.group()
@@ -40,6 +42,21 @@ def issuetypes(project_key):
                                                   i['description']))
 
 
+@click.group()
+@click.argument('issue_key')
+@click.pass_context
+def issue(ctx, issue_key):
+    ctx.obj['ISSUE_KEY'] = issue_key
+
+
+@click.command()
+@click.pass_context
+def worklog(ctx):
+    click.echo(ctx.obj['ISSUE_KEY'])
+
+
 cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)
+cli.add_command(issue)
+issue.add_command(worklog)

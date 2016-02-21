@@ -5,7 +5,7 @@ import os
 import yaml
 import click
 
-from accountable.jira import Jira
+from accountable.jira import Jira, Issue
 
 
 class Accountable(object):
@@ -71,3 +71,11 @@ class Accountable(object):
             for project in metadata['projects']:
                 issue_types[project['key']] = project['issuetypes']
             return issue_types
+
+    def worklog(self, issue_key):
+        client = Issue(issue_key, **self.config)
+        return client.worklog()
+
+    def transitions(self, issue_key):
+        client = Issue(issue_key, **self.config)
+        return client.transitions()
