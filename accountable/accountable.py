@@ -68,6 +68,6 @@ class Accountable(object):
             return {project_key: project['issuetypes']}
         else:
             issue_types = {}
-            for project in self.metadata['projects']:
+            for project in metadata['projects']:
                 issue_types[project['key']] = project['issuetypes']
             return issue_types

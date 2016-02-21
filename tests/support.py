@@ -14,7 +14,73 @@ def config_values():
 
 def metadata_response():
     return {
-
+        "expand": "projects",
+        "projects": [
+            {
+                "self": "http://www.example.com/jira/rest/api/2/project/EX",
+                "id": "10000",
+                "key": "EX",
+                "name": "Example Project",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/projectavatar?pid=10000&avatarId=10011",
+                    "24x24": "http://www.example.com/jira/secure/projectavatar?size=small&pid=10000&avatarId=10011",
+                    "16x16": "http://www.example.com/jira/secure/projectavatar?size=xsmall&pid=10000&avatarId=10011",
+                    "32x32": "http://www.example.com/jira/secure/projectavatar?size=medium&pid=10000&avatarId=10011"
+                },
+                "issuetypes": [
+                    {
+                        "self": "http://www.example.com/jira/rest/api/2/issueType/1",
+                        "id": "1",
+                        "description": "An error in the code",
+                        "iconUrl": "http://www.example.com/jira/images/icons/issuetypes/bug.png",
+                        "name": "Bug",
+                        "subtask": False,
+                        "fields": {
+                            "issuetype": {
+                                "required": True,
+                                "name": "Issue Type",
+                                "hasDefaultValue": False,
+                                "operations": [
+                                    "set"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "self": "http://www.example.com/jira/rest/api/2/project/AC",
+                "id": "10000",
+                "key": "AC",
+                "name": "Accountable",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/projectavatar?pid=10000&avatarId=10011",
+                    "24x24": "http://www.example.com/jira/secure/projectavatar?size=small&pid=10000&avatarId=10011",
+                    "16x16": "http://www.example.com/jira/secure/projectavatar?size=xsmall&pid=10000&avatarId=10011",
+                    "32x32": "http://www.example.com/jira/secure/projectavatar?size=medium&pid=10000&avatarId=10011"
+                },
+                "issuetypes": [
+                    {
+                        "self": "http://www.example.com/jira/rest/api/2/issueType/1",
+                        "id": "1",
+                        "description": "An error in the code",
+                        "iconUrl": "http://www.example.com/jira/images/icons/issuetypes/bug.png",
+                        "name": "Bug",
+                        "subtask": False,
+                        "fields": {
+                            "issuetype": {
+                                "required": True,
+                                "name": "Issue Type",
+                                "hasDefaultValue": False,
+                                "operations": [
+                                    "set"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
     }
 
 
