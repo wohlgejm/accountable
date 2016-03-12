@@ -5,6 +5,10 @@ import click
 from accountable.accountable import Accountable
 
 
+def prettyprint(*args):
+    click.echo(' - '.join([arg for arg in args]))
+
+
 @click.group()
 def cli():
     pass
@@ -26,7 +30,7 @@ def projects():
     accountable = Accountable()
     projects = accountable.projects()
     for key, name in projects:
-        click.echo('{} - {}'.format(key, name))
+        prettyprint(key, name)
 
 
 @click.command()
