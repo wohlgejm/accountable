@@ -40,27 +40,19 @@ def issuetypes(project_key):
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
         for i in issue_types:
-            click.echo('{} - {} - {} - {}'.format(key,
-                                                  i['id'],
-                                                  i['name'],
-                                                  i['description']))
-
-
-@click.group()
-@click.argument('issue_key')
-@click.pass_context
-def issue(ctx, issue_key):
-    ctx.obj['ISSUE_KEY'] = issue_key
+            prettyprint(key, i['id'], i['name'], i['description'])
 
 
 @click.command()
-@click.pass_context
-def worklog(ctx):
-    click.echo(ctx.obj['ISSUE_KEY'])
+@click.argument('issue_key')
+def issue(issue_key):
+    accountable = Accountable()
+    issue = accountable.issue_meta(issue_key)
+    for field, value in issue.items():
+        prettyprint(field, value)
 
 
 cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)
 cli.add_command(issue)
-issue.add_command(worklog)

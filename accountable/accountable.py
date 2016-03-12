@@ -1,11 +1,12 @@
 from __future__ import absolute_import
 
 import os
+from collections import OrderedDict
 
 import yaml
 import click
 
-from accountable.jira import Jira, Issue
+from accountable.jira import Jira
 
 
 class Accountable(object):
@@ -20,10 +21,10 @@ class Accountable(object):
         self.username = self.config['username']
         self.password = self.config['password']
         self.domain = self.config['domain']
+        self.client = Jira(self.username, self.password, self.domain)
 
     def _metadata(self):
-        client = Jira(self.username, self.password, self.domain)
-        metadata = client.metadata()
+        metadata = self.client.metadata()
         return metadata
 
     def _initial_setup(self):
@@ -72,10 +73,14 @@ class Accountable(object):
                 issue_types[project['key']] = project['issuetypes']
             return issue_types
 
-    def worklog(self, issue_key):
-        client = Issue(issue_key, **self.config)
-        return client.worklog()
-
-    def transitions(self, issue_key):
-        client = Issue(issue_key, **self.config)
-        return client.transitions()
+    def issue_meta(self, issue_key):
+        fields = self.client.issue(issue_key)['fields']
+        data = OrderedDict()
+        data['Reporter'] = fields['reporter']['displayName']
+        data['Assignee'] = fields['assignee']['displayName']
+        data['Issue Type'] = fields['issuetype']['name']
+        data['Status'] = fields['status']['statusCategory']['name']
+        data['Priority'] = fields['priority']['name']
+        data['Summary'] = fields['summary']
+        data['Description'] = fields['description']
+        return data
