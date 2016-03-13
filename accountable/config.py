@@ -12,6 +12,7 @@ class Config(object):
 
     def __init__(self, **kwargs):
         if kwargs.get('create_config'):
+            self.kwargs = kwargs
             self._initial_setup()
         self.config = self._load_config()
         self.username = self.config['username']
