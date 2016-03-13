@@ -1,13 +1,10 @@
 import requests
-from requests.auth import HTTPBasicAuth
 
 
 class Jira(object):
-    def __init__(self, username, password, domain):
-        self.username = username
-        self.password = password
+    def __init__(self, domain, auth):
         self.domain = domain
-        self.auth = HTTPBasicAuth(self.username, self.password)
+        self.auth = auth
         self.endpoint = 'https://{}/rest/api/2'.format(self.domain)
 
     @property
