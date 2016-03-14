@@ -10,7 +10,7 @@ Never leave the command line to update a ticket again!
 
 Getting started
 ===============
-Installtion:
+Installation:
 
 ``pip install accountable``
 
@@ -34,6 +34,21 @@ List metadata for an individual issue:
 
 ``accountable issue DEV-101``
 
+Configuring
+===========
+Since every account can be setup differently you might want to view custom fields for an issue.
+By default, the following fields are displayed when examining an issue:
+
+1. Reporter - Display name
+2. Assignee - Display name
+3. Issue type - name
+4. Status - Status category - name
+5. Summary
+6. Description
+
+These defaults can be changed by editing your `~/.accountable/config.yaml`. Nesting fields is supported. Check out
+the Jira documentation `here <https://docs.atlassian.com/jira/REST/latest/#api/2/issue-getIssue>`_ for information
+on fields in th payload.
 
 Using with Githooks
 ===================
