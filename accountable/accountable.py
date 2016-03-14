@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from collections import OrderedDict
 
@@ -44,7 +45,7 @@ class Accountable(object):
 
     @staticmethod
     def _access_field(field, d):
-        if isinstance(field, unicode) or isinstance(field, str):
+        if isinstance(field, str):
             return d[field]
         elif isinstance(field, dict):
             value = d[field.keys()[0]]
