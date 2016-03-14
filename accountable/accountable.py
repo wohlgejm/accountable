@@ -8,10 +8,7 @@ from accountable.config import Config
 
 class Accountable(object):
     def __init__(self, **kwargs):
-        if kwargs:
-            self.config = Config(kwargs)
-        else:
-            self.config = Config()
+        self.config = Config(**kwargs)
         self.client = Jira(self.config.domain, self.config.auth)
 
     def _metadata(self):
@@ -40,11 +37,25 @@ class Accountable(object):
     def issue_meta(self, issue_key):
         fields = self.client.issue(issue_key)['fields']
         data = OrderedDict()
-        data['Reporter'] = fields['reporter']['displayName']
-        data['Assignee'] = fields['assignee']['displayName']
-        data['Issue Type'] = fields['issuetype']['name']
-        data['Status'] = fields['status']['statusCategory']['name']
-        data['Priority'] = fields['priority']['name']
-        data['Summary'] = fields['summary']
-        data['Description'] = fields['description']
+        for field in self.config.issue_fields:
+            field_name = self._field_name(field)
+            data[field_name] = self._access_field(field, fields)
         return data
+
+    @staticmethod
+    def _access_field(field, d):
+        if isinstance(field, unicode) or isinstance(field, str):
+            return d[field]
+        elif isinstance(field, dict):
+            value = d[field.keys()[0]]
+            return Accountable._access_field(field.values()[0], value)
+        else:
+            raise TypeError('There is an issue with your issue field'
+                            'configuration.')
+
+    @staticmethod
+    def _field_name(field):
+        if isinstance(field, str):
+            return field.upper()
+        else:
+            return field.keys()[0].upper()

@@ -17,7 +17,7 @@ def cli():
 @click.command()
 @click.option('--username', prompt='Your Jira username')
 @click.option('--password', prompt='Your Jira password', hide_input=True)
-@click.option('--domain', prompt='The base url of your Jira account')
+@click.option('--domain', prompt='The domain where your Jira account is hosted')
 def configure(username, password, domain):
     Accountable(username=username,
                 password=password,
