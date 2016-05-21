@@ -76,6 +76,7 @@ def addcomment(ctx, body):
 
 issue.add_command(addcomment)
 issue.add_command(comments)
+
 cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)

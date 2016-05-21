@@ -34,6 +34,10 @@ List metadata for an individual issue:
 
 ``accountable issue DEV-101``
 
+Add a comment to an issue:
+
+``accountable issue DEV-102 addcomment "[~tpm] I'm BLOCKED"``
+
 Configuring
 ===========
 Currently, only Basic Auth is supported. Running `accountable configure` will prompt you to enter
