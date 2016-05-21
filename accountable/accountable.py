@@ -43,6 +43,9 @@ class Accountable(object):
             data[field_name] = self._access_field(field, fields)
         return data
 
+    def issue_comments(self, issue_key):
+        return self.client.issue_comments(issue_key)['comments']
+
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):

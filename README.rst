@@ -6,7 +6,7 @@ Accountable - a Jira CLI
 .. image:: https://coveralls.io/repos/github/wohlgejm/accountable/badge.svg?branch=master
     :target: https://coveralls.io/github/wohlgejm/accountable?branch=master
 
-Never leave the command line to update a ticket again!
+Never leave the command line to update a ticket again.
 
 Getting started
 ===============
@@ -36,6 +36,9 @@ List metadata for an individual issue:
 
 Configuring
 ===========
+Currently, only Basic Auth is supported. Running `accountable configure` will prompt you to enter
+your username, password, and the your Jira domain.
+
 Since every account can be setup differently you might want to view custom fields for an issue.
 By default, the following fields are displayed when examining an issue:
 
@@ -48,7 +51,7 @@ By default, the following fields are displayed when examining an issue:
 
 These defaults can be changed by editing your `~/.accountable/config.yaml`. Nesting fields is supported. Check out
 the Jira documentation `here <https://docs.atlassian.com/jira/REST/latest/#api/2/issue-getIssue>`_ for information
-on fields in th payload.
+on fields in the payload.
 
 Using with Githooks
 ===================
@@ -56,6 +59,10 @@ Using with Githooks
 
 Using worklogs with pomodoros
 =============================
+
+TODO
+====
+- OAuth
 
 
 Why?
@@ -65,4 +72,6 @@ based on a pull request, or a branch being created. You can also transition tick
 
 However, there are times when these automated triggers aren't enough.
 
-Often, you'll start work locally, and forget to put the ticket in progress. Or you'll forget to add a transition to a commit message. Multiple actions listed in your commit message also aren't relevant to the project's history.
+Often, you'll start work locally, and forget to put the ticket in progress. Or you'll forget to add
+a transition to a commit message. Multiple actions listed in your commit message also aren't relevant
+to the project's history.

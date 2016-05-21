@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import requests
 
 
@@ -16,6 +18,10 @@ class Jira(object):
 
     def issue(self, issue_key):
         return Resource(self, 'issue/{}'.format(issue_key), 'get').response()
+
+    def issue_comments(self, issue_key):
+        return Resource(self, 'issue/{}/comment'.format(issue_key),
+                        'get').response()
 
 
 class Resource(object):

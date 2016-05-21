@@ -43,15 +43,29 @@ def issuetypes(project_key):
             prettyprint(key, i['id'], i['name'], i['description'])
 
 
-@click.command()
+@click.group()
 @click.argument('issue_key')
-def issue(issue_key):
+@click.pass_context
+def issue(ctx, issue_key):
+    ctx.obj = {}
+    ctx.obj['issue_key'] = issue_key
+    if not ctx.invoked_subcommand:
+        accountable = Accountable()
+        issue = accountable.issue_meta(issue_key)
+        for field, value in issue.items():
+            prettyprint(field, value)
+
+
+@click.command()
+@click.pass_context
+def comments(ctx):
     accountable = Accountable()
-    issue = accountable.issue_meta(issue_key)
-    for field, value in issue.items():
-        prettyprint(field, value)
+    comments = accountable.issue_comments(ctx.obj['issue_key'])
+    for field in comments:
+        prettyprint(field['author']['name'], field['body'], field['created'])
 
 
+issue.add_command(comments)
 cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)
