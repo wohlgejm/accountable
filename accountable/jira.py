@@ -23,12 +23,17 @@ class Jira(object):
         return Resource(self, 'issue/{}/comment'.format(issue_key),
                         'get').response()
 
+    def issue_add_comment(self, issue_key, payload):
+        return Resource(self, 'issue/{}/comment'.format(issue_key),
+                        'post', payload).response()
+
 
 class Resource(object):
-    def __init__(self, jira, resource_name, method):
+    def __init__(self, jira, resource_name, method, payload={}):
         self.resource_endpoint = '{}/{}'.format(jira.endpoint, resource_name)
         self.auth = jira.auth
         self.method = method
+        self.payload = payload
 
     def response(self):
         method = self.method.lower()
@@ -43,5 +48,7 @@ class Resource(object):
         r = requests.get(self.resource_endpoint, auth=self.auth)
         return r.json()
 
-    def post():
-        pass
+    def post(self):
+        r = requests.post(self.resource_endpoint, auth=self.auth,
+                          json=self.payload)
+        return r.json()

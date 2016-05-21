@@ -46,6 +46,9 @@ class Accountable(object):
     def issue_comments(self, issue_key):
         return self.client.issue_comments(issue_key)['comments']
 
+    def issue_add_comment(self, issue_key, body):
+        return self.client.issue_add_comment(issue_key, {'body': body})
+
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):

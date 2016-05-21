@@ -43,7 +43,7 @@ def issuetypes(project_key):
             prettyprint(key, i['id'], i['name'], i['description'])
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.argument('issue_key')
 @click.pass_context
 def issue(ctx, issue_key):
@@ -65,6 +65,16 @@ def comments(ctx):
         prettyprint(field['author']['name'], field['body'], field['created'])
 
 
+@click.command()
+@click.pass_context
+@click.argument('body')
+def addcomment(ctx, body):
+    accountable = Accountable()
+    r = accountable.issue_add_comment(ctx.obj['issue_key'], body)
+    prettyprint(r['body'], r['author']['name'], r['created'])
+
+
+issue.add_command(addcomment)
 issue.add_command(comments)
 cli.add_command(configure)
 cli.add_command(projects)
