@@ -60,6 +60,11 @@ class Accountable(object):
         return self.resource.get('{}/issue/{}/worklog'.format(self.api_uri,
                                                               issue_key))
 
+    def issue_transitions(self, issue_key):
+        return self.resource.get(
+            '{}/issue/{}/transitions'.format(self.api_uri, issue_key)
+        )
+
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):

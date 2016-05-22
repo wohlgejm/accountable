@@ -96,7 +96,7 @@ def worklog(ctx):
 @click.pass_context
 def transitions(ctx):
     accountable = Accountable()
-    transitions = accountable.issue_worklog(
+    transitions = accountable.issue_transitions(
         ctx.obj['issue_key']
     ).get('transitions')
     if transitions:
