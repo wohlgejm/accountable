@@ -44,7 +44,7 @@ class Accountable(object):
         return data
 
     def issue_comments(self, issue_key):
-        return self.client.issue_comments(issue_key)['comments']
+        return self.client.issue_comments(issue_key)
 
     def issue_add_comment(self, issue_key, body):
         return self.client.issue_add_comment(issue_key, {'body': body})

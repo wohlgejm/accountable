@@ -60,9 +60,13 @@ def issue(ctx, issue_key):
 @click.pass_context
 def comments(ctx):
     accountable = Accountable()
-    comments = accountable.issue_comments(ctx.obj['issue_key'])
-    for field in comments:
-        prettyprint(field['author']['name'], field['body'], field['created'])
+    comments = accountable.issue_comments(ctx.obj['issue_key']).get('comments')
+    if comments:
+        for c in comments:
+            prettyprint(c['author']['name'], c['body'],
+                        c['created'])
+    else:
+        prettyprint('No comments found for {}'.format(ctx.obj['issue_key']))
 
 
 @click.command()

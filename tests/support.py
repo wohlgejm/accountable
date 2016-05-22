@@ -43,23 +43,28 @@ def issue_types():
     }
 
 
-def issue_response():
+def issue():
     return {
     "expand": "renderedFields,names,schema,transitions,operations,editmeta,changelog,versionedRepresentations",
     "id": "10002",
     "self": "http://www.example.com/jira/rest/api/2/issue/10002",
     "key": "EX-1",
     "fields": {
+        "reporter": {"displayName": "John Locke"},
+        "assignee": {"displayName": "Jack Shepard"},
+        "issuetype": {"name": "Blocker"},
+        "status": {"statusCategory": {"name": "In Progress"}},
+        "summary": "Bug report",
         "watcher": {
             "self": "http://www.example.com/jira/rest/api/2/issue/EX-1/watchers",
-            "isWatching": false,
+            "isWatching": False,
             "watchCount": 1,
             "watchers": [
                 {
                     "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
                     "name": "fred",
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 }
             ]
         },
@@ -77,7 +82,7 @@ def issue_response():
                         "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
                     },
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 },
                 "created": "2016-03-02T06:24:20.523+0000",
                 "size": 23123,
@@ -135,14 +140,14 @@ def issue_response():
                     "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
                     "name": "fred",
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 },
                 "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eget venenatis elit. Duis eu justo eget augue iaculis fermentum. Sed semper quam laoreet nisi egestas at posuere augue semper.",
                 "updateAuthor": {
                     "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
                     "name": "fred",
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 },
                 "created": "2016-03-02T06:24:20.542+0000",
                 "updated": "2016-03-02T06:24:20.543+0000",
@@ -201,13 +206,13 @@ def issue_response():
                     "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
                     "name": "fred",
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 },
                 "updateAuthor": {
                     "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
                     "name": "fred",
                     "displayName": "Fred F. User",
-                    "active": false
+                    "active": False
                 },
                 "comment": "I did some work here.",
                 "updated": "2016-03-02T06:24:20.723+0000",
@@ -354,6 +359,38 @@ def worklog():
         }
     ]
 }
+
+def comments():
+    return {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "comments": [
+            {
+                "self": "http://www.example.com/jira/rest/api/2/issue/10010/comment/10000",
+                "id": "10000",
+                "author": {
+                    "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                    "name": "fred",
+                    "displayName": "Fred F. User",
+                    "active": False
+                },
+                "body": "YUUUGE bug.",
+                "updateAuthor": {
+                    "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                    "name": "fred",
+                    "displayName": "Fred F. User",
+                    "active": False
+                },
+                "created": "2016-05-18T12:19:03.615+0000",
+                "updated": "2016-05-18T12:19:03.615+0000",
+                "visibility": {
+                    "type": "role",
+                    "value": "Administrators"
+                }
+            }
+        ]
+    }
 
 
 @pytest.fixture
