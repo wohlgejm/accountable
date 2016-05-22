@@ -53,7 +53,17 @@ def test_issue_no_comments(mock_object):
     runner = CliRunner()
     result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
     assert result.exit_code == 0
-    assert result.output == ('No comments found for DEV-101\n')
+    assert result.output == 'No comments found for DEV-101\n'
+
+
+@mock.patch('accountable.accountable.Resource.post')
+def test_addcomment(mock_object):
+    mock_object.return_value = support.comments()['comments'][0]
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'addcomment', 'A comment'])
+    assert result.exit_code == 0
+    assert result.output == ('fred - YUUUGE bug. - '
+                             '2016-05-18T12:19:03.615+0000\n')
 
 
 @mock.patch('accountable.accountable.Resource.get')

@@ -75,7 +75,7 @@ def comments(ctx):
 def addcomment(ctx, body):
     accountable = Accountable()
     r = accountable.issue_add_comment(ctx.obj['issue_key'], body)
-    prettyprint(r['body'], r['author']['name'], r['created'])
+    prettyprint(r['author']['name'], r['body'], r['created'])
 
 
 @click.command()
