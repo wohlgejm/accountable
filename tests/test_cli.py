@@ -25,7 +25,7 @@ def test_issuetypes(mock_object):
     assert result.output == 'AC - 1 - Bug - An error in the code\n'
 
 
-@mock.patch('accountable.jira.Jira.issue')
+@mock.patch('accountable.accountable.Resource.get')
 def test_issue(mock_object):
     mock_object.return_value = support.issue()
     runner = CliRunner()
@@ -37,7 +37,7 @@ def test_issue(mock_object):
                              'DESCRIPTION - example bug report\n')
 
 
-@mock.patch('accountable.jira.Jira.issue_comments')
+@mock.patch('accountable.accountable.Resource.get')
 def test_issue_comments(mock_object):
     mock_object.return_value = support.comments()
     runner = CliRunner()
@@ -47,7 +47,7 @@ def test_issue_comments(mock_object):
                              '2016-05-18T12:19:03.615+0000\n')
 
 
-@mock.patch('accountable.jira.Jira.issue_comments')
+@mock.patch('accountable.accountable.Resource.get')
 def test_issue_no_comments(mock_object):
     mock_object.return_value = {}
     runner = CliRunner()

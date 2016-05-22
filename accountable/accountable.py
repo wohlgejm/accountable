@@ -3,17 +3,20 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 
-from accountable.jira import Jira
+import requests
+
 from accountable.config import Config
 
 
 class Accountable(object):
     def __init__(self, **kwargs):
         self.config = Config(**kwargs)
-        self.client = Jira(self.config.domain, self.config.auth)
+        self.resource = Resource(self.config.auth)
+        self.api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
 
     def _metadata(self):
-        metadata = self.client.metadata()
+        metadata = self.resource.get('{}/issue/createmeta'
+                                     .format(self.api_uri))
         return metadata
 
     def projects(self):
@@ -36,7 +39,8 @@ class Accountable(object):
             return issue_types
 
     def issue_meta(self, issue_key):
-        fields = self.client.issue(issue_key)['fields']
+        fields = self.resource.get('{}/issue/{}'.format(self.api_uri,
+                                                        issue_key))['fields']
         data = OrderedDict()
         for field in self.config.issue_fields:
             field_name = self._field_name(field)
@@ -44,10 +48,13 @@ class Accountable(object):
         return data
 
     def issue_comments(self, issue_key):
-        return self.client.issue_comments(issue_key)
+        return self.resource.get('{}/issue/{}/comment'.format(self.api_uri,
+                                                              issue_key))
 
     def issue_add_comment(self, issue_key, body):
-        return self.client.issue_add_comment(issue_key, {'body': body})
+        return self.resource.post('{}/issue/{}/comment'
+                                  .format(self.api_uri, issue_key),
+                                  {'body': body})
 
     @staticmethod
     def _access_field(field, d):
@@ -66,3 +73,17 @@ class Accountable(object):
             return field.upper()
         else:
             return list(field.keys())[0].upper()
+
+
+class Resource(object):
+    def __init__(self, auth):
+        self.auth = auth
+
+    def get(self, endpoint):
+        r = requests.get(endpoint, auth=self.auth)
+        return r.json()
+
+    def post(self, endpoint, payload={}):
+        r = requests.post(endpoint, auth=self.auth,
+                          json=self.payload)
+        return r.json()
