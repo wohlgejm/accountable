@@ -393,6 +393,42 @@ def comments():
     }
 
 
+def issue_worklog():
+    return {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "worklogs": [
+            {
+                "self": "http://www.example.com/jira/rest/api/2/issue/10010/worklog/10000",
+                "author": {
+                    "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                    "name": "fred",
+                    "displayName": "Fred F. User",
+                    "active": False
+                },
+                "updateAuthor": {
+                    "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                    "name": "fred",
+                    "displayName": "Fred F. User",
+                    "active": False
+                },
+                "comment": "I did some work here.",
+                "updated": "2016-05-18T12:19:04.127+0000",
+                "visibility": {
+                    "type": "group",
+                    "value": "jira-developers"
+                },
+                "started": "2016-05-18T12:19:04.126+0000",
+                "timeSpent": "3h 20m",
+                "timeSpentSeconds": 12000,
+                "id": "100028",
+                "issueId": "10002"
+            }
+        ]
+    }
+
+
 @pytest.fixture
 def config(tmpdir, **kwargs):
     Config.CONFIG_DIR = '{}/.accountable'.format(str(tmpdir))

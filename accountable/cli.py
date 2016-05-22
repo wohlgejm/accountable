@@ -78,6 +78,21 @@ def addcomment(ctx, body):
     prettyprint(r['body'], r['author']['name'], r['created'])
 
 
+@click.command()
+@click.pass_context
+def worklog(ctx):
+    accountable = Accountable()
+    worklog = accountable.issue_worklog(ctx.obj['issue_key']).get('worklogs')
+    if worklog:
+        for w in worklog:
+            prettyprint('Author', w['author']['name'])
+            prettyprint('Comment', w.get('comment'))
+            prettyprint('Time spent', w['timeSpent'])
+    else:
+        prettyprint('No worklogs found for {}'.format(ctx.obj['issue_key']))
+
+
+issue.add_command(worklog)
 issue.add_command(addcomment)
 issue.add_command(comments)
 

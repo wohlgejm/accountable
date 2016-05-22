@@ -54,3 +54,23 @@ def test_issue_no_comments(mock_object):
     result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
     assert result.exit_code == 0
     assert result.output == ('No comments found for DEV-101\n')
+
+
+@mock.patch('accountable.accountable.Resource.get')
+def test_issue_worklog(mock_object):
+    mock_object.return_value = support.issue_worklog()
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'worklog'])
+    assert result.exit_code == 0
+    assert result.output == ('Author - fred\n'
+                             'Comment - I did some work here.\n'
+                             'Time spent - 3h 20m\n')
+
+
+@mock.patch('accountable.accountable.Resource.get')
+def test_issue_no_worklog(mock_object):
+    mock_object.return_value = {}
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'worklog'])
+    assert result.exit_code == 0
+    assert result.output == 'No worklogs found for DEV-101\n'
