@@ -96,7 +96,9 @@ def worklog(ctx):
 @click.pass_context
 def transitions(ctx):
     accountable = Accountable()
-    transitions = accountable.issue_worklog(ctx.obj['issue_key']).get('transitions')
+    transitions = accountable.issue_worklog(
+        ctx.obj['issue_key']
+    ).get('transitions')
     if transitions:
         for t in transitions:
             prettyprint(t['id'], t['name'])
