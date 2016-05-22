@@ -74,3 +74,21 @@ def test_issue_no_worklog(mock_object):
     result = runner.invoke(cli.issue, ['DEV-101', 'worklog'])
     assert result.exit_code == 0
     assert result.output == 'No worklogs found for DEV-101\n'
+
+
+@mock.patch('accountable.accountable.Resource.get')
+def test_issue_transitions(mock_object):
+    mock_object.return_value = support.issue_transitions()
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'transitions'])
+    assert result.exit_code == 0
+    assert result.output == '2 - Close Issue\n711 - QA Review\n'
+
+
+@mock.patch('accountable.accountable.Resource.get')
+def test_issue_no_transitions(mock_object):
+    mock_object.return_value = {}
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'transitions'])
+    assert result.exit_code == 0
+    assert result.output == 'No transitions found for DEV-101\n'

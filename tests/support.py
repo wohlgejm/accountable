@@ -429,6 +429,110 @@ def issue_worklog():
     }
 
 
+def issue_transitions():
+    return {
+        "expand": "transitions",
+        "transitions": [
+            {
+                "id": "2",
+                "name": "Close Issue",
+                "to": {
+                    "self": "http://localhost:8090/jira/rest/api/2.0/status/10000",
+                    "description": "The issue is currently being worked on.",
+                    "iconUrl": "http://localhost:8090/jira/images/icons/progress.gif",
+                    "name": "In Progress",
+                    "id": "10000",
+                    "statusCategory": {
+                        "self": "http://localhost:8090/jira/rest/api/2.0/statuscategory/1",
+                        "id": 1,
+                        "key": "in-flight",
+                        "colorName": "yellow",
+                        "name": "In Progress"
+                    }
+                },
+                "fields": {
+                    "summary": {
+                        "required": False,
+                        "schema": {
+                            "type": "array",
+                            "items": "option",
+                            "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multiselect",
+                            "customId": 10001
+                        },
+                        "name": "My Multi Select",
+                        "hasDefaultValue": False,
+                        "operations": [
+                            "set",
+                            "add"
+                        ],
+                        "allowedValues": [
+                            "red",
+                            "blue"
+                        ]
+                    }
+                }
+            },
+            {
+                "id": "711",
+                "name": "QA Review",
+                "to": {
+                    "self": "http://localhost:8090/jira/rest/api/2.0/status/5",
+                    "description": "The issue is closed.",
+                    "iconUrl": "http://localhost:8090/jira/images/icons/closed.gif",
+                    "name": "Closed",
+                    "id": "5",
+                    "statusCategory": {
+                        "self": "http://localhost:8090/jira/rest/api/2.0/statuscategory/9",
+                        "id": 9,
+                        "key": "completed",
+                        "colorName": "green"
+                    }
+                },
+                "fields": {
+                    "summary": {
+                        "required": False,
+                        "schema": {
+                            "type": "array",
+                            "items": "option",
+                            "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multiselect",
+                            "customId": 10001
+                        },
+                        "name": "My Multi Select",
+                        "hasDefaultValue": False,
+                        "operations": [
+                            "set",
+                            "add"
+                        ],
+                        "allowedValues": [
+                            "red",
+                            "blue"
+                        ]
+                    },
+                    "colour": {
+                        "required": False,
+                        "schema": {
+                            "type": "array",
+                            "items": "option",
+                            "custom": "com.atlassian.jira.plugin.system.customfieldtypes:multiselect",
+                            "customId": 10001
+                        },
+                        "name": "My Multi Select",
+                        "hasDefaultValue": False,
+                        "operations": [
+                            "set",
+                            "add"
+                        ],
+                        "allowedValues": [
+                            "red",
+                            "blue"
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+
+
 @pytest.fixture
 def config(tmpdir, **kwargs):
     Config.CONFIG_DIR = '{}/.accountable'.format(str(tmpdir))

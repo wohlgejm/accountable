@@ -92,6 +92,19 @@ def worklog(ctx):
         prettyprint('No worklogs found for {}'.format(ctx.obj['issue_key']))
 
 
+@click.command()
+@click.pass_context
+def transitions(ctx):
+    accountable = Accountable()
+    transitions = accountable.issue_worklog(ctx.obj['issue_key']).get('transitions')
+    if transitions:
+        for t in transitions:
+            prettyprint(t['id'], t['name'])
+    else:
+        prettyprint('No transitions found for {}'.format(ctx.obj['issue_key']))
+
+
+issue.add_command(transitions)
 issue.add_command(worklog)
 issue.add_command(addcomment)
 issue.add_command(comments)
