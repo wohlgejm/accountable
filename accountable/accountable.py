@@ -54,8 +54,8 @@ class Accountable(object):
         if isinstance(field, str):
             return d[field]
         elif isinstance(field, dict):
-            value = d[field.keys()[0]]
-            return Accountable._access_field(field.values()[0], value)
+            value = d[list(field.keys())[0]]
+            return Accountable._access_field(list(field.values())[0], value)
         else:
             raise TypeError('There is an issue with your issue field'
                             'configuration.')
@@ -65,4 +65,4 @@ class Accountable(object):
         if isinstance(field, str):
             return field.upper()
         else:
-            return field.keys()[0].upper()
+            return list(field.keys())[0].upper()
