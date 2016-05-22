@@ -45,3 +45,12 @@ def test_issue_comments(mock_object):
     assert result.exit_code == 0
     assert result.output == ('fred - YUUUGE bug. - '
                              '2016-05-18T12:19:03.615+0000\n')
+
+
+@mock.patch('accountable.jira.Jira.issue_comments')
+def test_issue_no_comments(mock_object):
+    mock_object.return_value = {}
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
+    assert result.exit_code == 0
+    assert result.output == ('No comments found for DEV-101\n')
