@@ -4,6 +4,14 @@ from accountable.config import Config
 from accountable.accountable import Accountable
 
 
+class MockResponse(object):
+    def __init__(self, status_code):
+        self.status_code = status_code
+
+    def status_code(self):
+        return self.status_code
+
+
 def config_values():
     return {
         'username': 'testusername',

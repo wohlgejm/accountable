@@ -65,6 +65,12 @@ class Accountable(object):
             '{}/issue/{}/transitions'.format(self.api_uri, issue_key)
         )
 
+    def issue_do_transition(self, issue_key, transition_id):
+        return self.resource.post(
+            '{}/issue/{}/transitions'.format(self.api_uri, issue_key),
+            {'transition': {'id': transition_id}}
+        )
+
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):
@@ -94,5 +100,8 @@ class Resource(object):
 
     def post(self, endpoint, payload={}):
         r = requests.post(endpoint, auth=self.auth,
-                          json=self.payload)
-        return r.json()
+                          json=payload)
+        try:
+            return r.json()
+        except ValueError:
+            return r

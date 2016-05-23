@@ -102,3 +102,12 @@ def test_issue_no_transitions(mock_object):
     result = runner.invoke(cli.issue, ['DEV-101', 'transitions'])
     assert result.exit_code == 0
     assert result.output == 'No transitions found for DEV-101\n'
+
+
+@mock.patch('accountable.accountable.Resource.post')
+def test_do_transition(mock_object):
+    mock_object.return_value = support.MockResponse(204)
+    runner = CliRunner()
+    result = runner.invoke(cli.issue, ['DEV-101', 'dotransition', str(1)])
+    assert result.exit_code == 0
+    assert result.output == 'Successfully transitioned DEV-101\n'

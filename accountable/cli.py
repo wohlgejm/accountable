@@ -106,6 +106,19 @@ def transitions(ctx):
         prettyprint('No transitions found for {}'.format(ctx.obj['issue_key']))
 
 
+@click.command()
+@click.pass_context
+@click.argument('transition_id')
+def dotransition(ctx, transition_id):
+    accountable = Accountable()
+    t = accountable.issue_do_transition(ctx.obj['issue_key'], transition_id)
+    if t.status_code == 204:
+        prettyprint(
+            'Successfully transitioned {}'.format(ctx.obj['issue_key'])
+        )
+
+
+issue.add_command(dotransition)
 issue.add_command(transitions)
 issue.add_command(worklog)
 issue.add_command(addcomment)
