@@ -8,7 +8,7 @@ Accountable - a Jira CLI
 
 Never leave the command line to update a ticket again.
 
-Getting started
+Quickstart
 ===============
 Installation:
 
@@ -24,11 +24,7 @@ List all projects:
 
 List all issue types:
 
-``accountable issuetypes``
-
-List issue types for an individual project:
-
-``accountable issuetypes AC``
+``accountable issuetypes`` or ``accountable issuetypes DEV``
 
 List metadata for an individual issue:
 
@@ -37,6 +33,14 @@ List metadata for an individual issue:
 Add a comment to an issue:
 
 ``accountable issue DEV-102 addcomment "[~tpm] I'm BLOCKED"``
+
+List available transitions for an issue:
+
+``accountable issue DEV-103 transitions``
+
+Do a transition for an issue:
+
+``accountable issue DEV-104 dotransition 1``
 
 Configuring
 ===========
@@ -60,12 +64,9 @@ on fields in the payload.
 Using with Githooks
 ===================
 
-
-Using worklogs with pomodoros
-=============================
-
 TODO
 ====
+- Using with popodoro
 - OAuth
 
 
