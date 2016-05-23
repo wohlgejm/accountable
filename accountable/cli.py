@@ -11,6 +11,9 @@ def prettyprint(*args):
 
 @click.group()
 def cli():
+    """
+    A Jira CLI.
+    """
     pass
 
 
@@ -19,6 +22,10 @@ def cli():
 @click.option('--password', prompt='Your Jira password', hide_input=True)
 @click.option('--domain', prompt='The domain where your account is hosted')
 def configure(username, password, domain):
+    """
+    Initial configuration. Used to specify your username, password and domain.
+    Configuration is stored in ~/.accountable/config.yaml.
+    """
     Accountable(username=username,
                 password=password,
                 domain=domain,
@@ -27,6 +34,9 @@ def configure(username, password, domain):
 
 @click.command()
 def projects():
+    """
+    List all projects.
+    """
     accountable = Accountable()
     projects = accountable.projects()
     for key, name in projects:
@@ -36,6 +46,10 @@ def projects():
 @click.command()
 @click.argument('project_key', default='')
 def issuetypes(project_key):
+    """
+    List all issue types. Optional parameter to list issue types by a given
+    project.
+    """
     accountable = Accountable()
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
@@ -47,6 +61,10 @@ def issuetypes(project_key):
 @click.argument('issue_key')
 @click.pass_context
 def issue(ctx, issue_key):
+    """
+    List metadata for a given issue key. Issue keys should take the format of
+    {PROJECT-ID}-{ISSUE-ID}.
+    """
     ctx.obj = {}
     ctx.obj['issue_key'] = issue_key
     if not ctx.invoked_subcommand:
@@ -59,6 +77,9 @@ def issue(ctx, issue_key):
 @click.command()
 @click.pass_context
 def comments(ctx):
+    """
+    Lists all comments for a given issue key.
+    """
     accountable = Accountable()
     comments = accountable.issue_comments(ctx.obj['issue_key']).get('comments')
     if comments:
@@ -73,6 +94,10 @@ def comments(ctx):
 @click.pass_context
 @click.argument('body')
 def addcomment(ctx, body):
+    """
+    Add a comment to the given issue key. Accepts a body argument to be used
+    as the comment's body.
+    """
     accountable = Accountable()
     r = accountable.issue_add_comment(ctx.obj['issue_key'], body)
     prettyprint(r['author']['name'], r['body'], r['created'])
@@ -81,6 +106,9 @@ def addcomment(ctx, body):
 @click.command()
 @click.pass_context
 def worklog(ctx):
+    """
+    List all worklogs for a given issue key.
+    """
     accountable = Accountable()
     worklog = accountable.issue_worklog(ctx.obj['issue_key']).get('worklogs')
     if worklog:
@@ -95,6 +123,9 @@ def worklog(ctx):
 @click.command()
 @click.pass_context
 def transitions(ctx):
+    """
+    List all possible transitions for a given issue.
+    """
     accountable = Accountable()
     transitions = accountable.issue_transitions(
         ctx.obj['issue_key']
@@ -110,6 +141,10 @@ def transitions(ctx):
 @click.pass_context
 @click.argument('transition_id')
 def dotransition(ctx, transition_id):
+    """
+    Transition the given issue to the provided ID. The API does not return a
+    JSON response for this call.
+    """
     accountable = Accountable()
     t = accountable.issue_do_transition(ctx.obj['issue_key'], transition_id)
     if t.status_code == 204:
@@ -128,3 +163,7 @@ cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)
 cli.add_command(issue)
+
+
+if __name__ == '__main__':
+    cli()
