@@ -5,6 +5,9 @@ Accountable - a Jira CLI
     :target: https://travis-ci.org/wohlgejm/accountable
 .. image:: https://coveralls.io/repos/github/wohlgejm/accountable/badge.svg?branch=master
     :target: https://coveralls.io/github/wohlgejm/accountable?branch=master
+.. image:: https://requires.io/github/wohlgejm/accountable/requirements.svg?branch=master
+     :target: https://requires.io/github/wohlgejm/accountable/requirements/?branch=master
+     :alt: Requirements Status
 
 Never leave the command line to update a ticket again.
 
