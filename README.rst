@@ -66,7 +66,7 @@ Using with Githooks
 
 TODO
 ====
-- Using with popodoro
+- Using with pomodoro
 - OAuth
 
 
