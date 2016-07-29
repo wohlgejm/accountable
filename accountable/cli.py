@@ -84,8 +84,7 @@ def comments(ctx):
     comments = accountable.issue_comments(ctx.obj['issue_key']).get('comments')
     if comments:
         for c in comments:
-            prettyprint(c['author']['name'], c['body'],
-                        c['created'])
+            prettyprint(c['id'], c['author']['name'], c['body'], c['created'])
     else:
         prettyprint('No comments found for {}'.format(ctx.obj['issue_key']))
 
