@@ -57,6 +57,14 @@ def issuetypes(project_key):
             prettyprint(key, i['id'], i['name'], i['description'])
 
 
+@click.command()
+@click.argument('options', nargs=-1)
+def createissue(options):
+    accountable = Accountable()
+    issue = accountable.issue_create(options)
+    prettyprint(issue['id'], issue['key'], issue['self'])
+
+
 @click.group(invoke_without_command=True)
 @click.argument('issue_key')
 @click.pass_context
@@ -162,6 +170,7 @@ cli.add_command(configure)
 cli.add_command(projects)
 cli.add_command(issuetypes)
 cli.add_command(issue)
+cli.add_command(createissue)
 
 
 if __name__ == '__main__':

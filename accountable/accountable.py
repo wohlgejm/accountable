@@ -49,7 +49,9 @@ class Accountable(object):
         return data
 
     def issue_create(self, options):
-        self._args_to_dict(options)
+        payload = self._args_to_dict(options)
+        return self.resource.post('{}/issue'.format(self.api_uri),
+                                  payload)
 
     def issue_comments(self, issue_key):
         return self.resource.get('{}/issue/{}/comment'.format(self.api_uri,
@@ -75,8 +77,6 @@ class Accountable(object):
             {'transition': {'id': transition_id}}
         )
 
-<<<<<<< HEAD
-=======
     def _args_to_dict(self, args_tuple):
         d = {}
         for arg in zip(args_tuple[0::2], args_tuple[1::2]):
@@ -95,7 +95,6 @@ class Accountable(object):
 
         return d
 
->>>>>>> 1b7f8ba... fixup! Add ID to projects output
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):

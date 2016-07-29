@@ -111,3 +111,16 @@ def test_do_transition(mock_object):
     result = runner.invoke(cli.issue, ['DEV-101', 'dotransition', str(1)])
     assert result.exit_code == 0
     assert result.output == 'Successfully transitioned DEV-101\n'
+
+
+@mock.patch('accountable.accountable.Resource.post')
+def test_createissue_nargs(mock_object):
+    mock_object.return_value = support.issue_create()
+    runner = CliRunner()
+    result = runner.invoke(cli.createissue, ['fields.project.id', '1'])
+    assert result.exit_code == 0
+    mock_object.assert_called_once_with('https://testdomain/rest/api/2/issue',
+                                        {'fields': {'project': {'id': '1'}}})
+    assert result.output == ('10000 - TST-24 - '
+                             'http://www.example.com/jira/rest/api/2/issue/'
+                             '10000\n')

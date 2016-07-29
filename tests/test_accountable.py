@@ -24,9 +24,3 @@ class TestAccountable(object):
         a = support.accountable(tmpdir)
         mock_object.return_value = support.metadata_response()
         assert list(a.issue_types('EX').keys()) == ['EX']
-
-    @mock.patch('accountable.accountable.Resource.get')
-    def test_issue_create(self, mock_object, tmpdir):
-        a = support.accountable(tmpdir)
-        mock_object.return_value = support.metadata_response()
-        assert list(a.issue_types('EX').keys()) == ['EX']
