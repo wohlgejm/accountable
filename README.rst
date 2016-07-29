@@ -48,7 +48,7 @@ Do a transition for an issue:
 Configuring
 ===========
 Currently, only Basic Auth is supported. Running `accountable configure` will prompt you to enter
-your username, password, and the your Jira domain.
+your username, password, and your Jira domain.
 
 Since every account can be setup differently you might want to view custom fields for an issue.
 By default, the following fields are displayed when examining an issue:
