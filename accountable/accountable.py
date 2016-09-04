@@ -21,7 +21,8 @@ class Accountable(object):
 
     def projects(self):
         metadata = self._metadata()
-        return [(project['key'],
+        return [(project['id'],
+                 project['key'],
                  project['name']) for project in metadata['projects']]
 
     def issue_types(self, project_key):
@@ -47,6 +48,9 @@ class Accountable(object):
             data[field_name] = self._access_field(field, fields)
         return data
 
+    def issue_create(self, options):
+        self._args_to_dict(options)
+
     def issue_comments(self, issue_key):
         return self.resource.get('{}/issue/{}/comment'.format(self.api_uri,
                                                               issue_key))
@@ -71,6 +75,27 @@ class Accountable(object):
             {'transition': {'id': transition_id}}
         )
 
+<<<<<<< HEAD
+=======
+    def _args_to_dict(self, args_tuple):
+        d = {}
+        for arg in zip(args_tuple[0::2], args_tuple[1::2]):
+            keys = arg[0].split('.')
+            self._set_nested_key(keys, arg[1], d)
+        return d
+
+    def _set_nested_key(self, key, value, d):
+        if isinstance(key, list) and len(key) > 1:
+            head, tail = key[0], key[1:]
+            if not d.get(head):
+                d[head] = {}
+            self._set_nested_key(tail, value, d[head])
+        else:
+            d[list(key)[0]] = value
+
+        return d
+
+>>>>>>> 1b7f8ba... fixup! Add ID to projects output
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):

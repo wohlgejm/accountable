@@ -13,7 +13,7 @@ def test_projects(mock_object):
     runner = CliRunner()
     result = runner.invoke(cli.projects)
     assert result.exit_code == 0
-    assert result.output == 'AC - Accountable\nEX - Example Project\n'
+    assert result.output == '1 - AC - Accountable\n2 - EX - Example Project\n'
 
 
 @mock.patch('accountable.accountable.Accountable.issue_types')
@@ -43,7 +43,7 @@ def test_issue_comments(mock_object):
     runner = CliRunner()
     result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
     assert result.exit_code == 0
-    assert result.output == ('fred - YUUUGE bug. - '
+    assert result.output == ('10000 - fred - YUUUGE bug. - '
                              '2016-05-18T12:19:03.615+0000\n')
 
 

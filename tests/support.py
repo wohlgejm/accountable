@@ -23,10 +23,16 @@ def config_values():
 
 def projects():
     return [
-        ('AC', 'Accountable'),
-        ('EX', 'Example Project')
+        ('1', 'AC', 'Accountable'),
+        ('2', 'EX', 'Example Project')
     ]
 
+def issue_create():
+    return {
+            "id": "10000",
+            "key": "TST-24",
+            "self": "http://www.example.com/jira/rest/api/2/issue/10000"
+            }
 
 def issue_types():
     return {
@@ -549,6 +555,6 @@ def config(tmpdir, **kwargs):
 
 
 @pytest.fixture
-def accountable(tmpdir, **kwargs):
-    Accountable.config = config(tmpdir, **kwargs)
+def accountable(tmpdir):
+    Accountable.config = config(tmpdir, **config_values())
     return Accountable()

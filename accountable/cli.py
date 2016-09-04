@@ -39,8 +39,8 @@ def projects():
     """
     accountable = Accountable()
     projects = accountable.projects()
-    for key, name in projects:
-        prettyprint(key, name)
+    for pid, key, name in projects:
+        prettyprint(pid, key, name)
 
 
 @click.command()
