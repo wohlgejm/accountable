@@ -29,6 +29,10 @@ List all issue types:
 
 ``accountable issuetypes`` or ``accountable issuetypes DEV``
 
+Create an issue:
+
+``accountable createissue fields.project.id 10000 fields.issuetype.id 3 fields.summary 'Yuge bug'``
+
 List metadata for an individual issue:
 
 ``accountable issue DEV-101``
@@ -64,22 +68,26 @@ These defaults can be changed by editing your `~/.accountable/config.yaml`. Nest
 the Jira documentation `here <https://docs.atlassian.com/jira/REST/latest/#api/2/issue-getIssue>`_ for information
 on fields in the payload.
 
-Using with Githooks
-===================
-
 TODO
 ====
 - Using with pomodoro
 - OAuth
 
-
 Why?
 ====
 Jira already supports robust triggers, like changing a ticket's status
-based on a pull request, or a branch being created. You can also transition tickets with commit messages.
+based on a pull request or a branch being created. You can also transition tickets with commit messages.
 
-However, there are times when these automated triggers aren't enough.
+However, there are times when these automated triggers fall short.
 
-Often, you'll start work locally, and forget to put the ticket in progress. Or you'll forget to add
-a transition to a commit message. Multiple actions listed in your commit message also aren't relevant
-to the project's history.
+Here's where I get frusted with Jira:
+- I need to add a comment to a story for the product manager.
+Opening the browser to do this this breaks my concentration.
+- I start work locally and don't push up a branch immediately. This doesn't trigger an automated transition.
+- I don't like smart commit messages. Commit messages should reference the issue and be a concise,
+grepable implentation note for your fellow developers. Smart commits muck up the history.
+- I start a story and realize that a refactor, usually to allow for extension, is required before
+work on the requirements can start. The refactor should be in it's own pull request, so I forget to
+create a ticket and that work goes untracked.
+
+Paired with git, this project attempts to solve these issues.
