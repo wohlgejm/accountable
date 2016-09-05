@@ -65,6 +65,14 @@ def createissue(options):
     prettyprint(issue['id'], issue['key'], issue['self'])
 
 
+@click.command()
+@click.argument('options', nargs=-1)
+def checkoutbranch(options):
+    accountable = Accountable()
+    issue = accountable.checkout_branch(options)
+    prettyprint(issue['id'], issue['key'], issue['self'])
+
+
 @click.group(invoke_without_command=True)
 @click.argument('issue_key')
 @click.pass_context
@@ -171,6 +179,7 @@ cli.add_command(projects)
 cli.add_command(issuetypes)
 cli.add_command(issue)
 cli.add_command(createissue)
+cli.add_command(checkoutbranch)
 
 
 if __name__ == '__main__':

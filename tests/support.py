@@ -12,6 +12,13 @@ class MockResponse(object):
         return self.status_code
 
 
+class MockRepo(object):
+    def checkout(*args, **kwargs):
+        pass
+
+    def push(*args, **kwargs):
+        pass
+
 def config_values():
     return {
         'username': 'testusername',

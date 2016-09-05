@@ -2,8 +2,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from collections import OrderedDict
+import os
 
 import requests
+from git import Repo
+from slugify import slugify
 
 from accountable.config import Config
 
@@ -13,11 +16,6 @@ class Accountable(object):
         self.config = Config(**kwargs)
         self.resource = Resource(self.config.auth)
         self.api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
-
-    def _metadata(self):
-        metadata = self.resource.get('{}/issue/createmeta'
-                                     .format(self.api_uri))
-        return metadata
 
     def projects(self):
         metadata = self._metadata()
@@ -53,6 +51,15 @@ class Accountable(object):
         return self.resource.post('{}/issue'.format(self.api_uri),
                                   payload)
 
+    def checkout_branch(self, options):
+        payload = self._args_to_dict(options)
+        new_issue = self.issue_create(options)
+        summary = payload['fields']['summary']
+        key = new_issue['key']
+        self._repo().checkout('HEAD', b='{}-{}'.format(key, slugify(summary)))
+        self._repo().push('-u', 'origin', 'HEAD')
+        return new_issue
+
     def issue_comments(self, issue_key):
         return self.resource.get('{}/issue/{}/comment'.format(self.api_uri,
                                                               issue_key))
@@ -76,6 +83,14 @@ class Accountable(object):
             '{}/issue/{}/transitions'.format(self.api_uri, issue_key),
             {'transition': {'id': transition_id}}
         )
+
+    def _repo(self):
+        return Repo(os.getcwd()).git
+
+    def _metadata(self):
+        metadata = self.resource.get('{}/issue/createmeta'
+                                     .format(self.api_uri))
+        return metadata
 
     def _args_to_dict(self, args_tuple):
         d = {}

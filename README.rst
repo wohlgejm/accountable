@@ -68,6 +68,17 @@ These defaults can be changed by editing your `~/.accountable/config.yaml`. Nest
 the Jira documentation `here <https://docs.atlassian.com/jira/REST/latest/#api/2/issue-getIssue>`_ for information
 on fields in the payload.
 
+Using with git
+==============
+Accountable can be used in conjunction with git.
+
+For example, if you want to start work and there isn't a ticket created for it, you can use the ``checkoutbranch`` command.
+
+``accountable checkoutbranch fields.summary 'Refactoring foo' fields.project.id 1 fields.issuetype.id 1000``
+
+This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary. A new branch will be pushed to origin/HEAD to ensure that if you have automated transitions setup, they will be triggered
+
+
 TODO
 ====
 - Using with pomodoro
@@ -80,14 +91,11 @@ based on a pull request or a branch being created. You can also transition ticke
 
 However, there are times when these automated triggers fall short.
 
-Here's where I get frusted with Jira:
-- I need to add a comment to a story for the product manager.
-Opening the browser to do this this breaks my concentration.
+Here's where I get frustrated with Jira:
+
+- I need to add a comment to a story for the product manager. Opening the browser to do this this breaks my concentration.
 - I start work locally and don't push up a branch immediately. This doesn't trigger an automated transition.
-- I don't like smart commit messages. Commit messages should reference the issue and be a concise,
-grepable implentation note for your fellow developers. Smart commits muck up the history.
-- I start a story and realize that a refactor, usually to allow for extension, is required before
-work on the requirements can start. The refactor should be in it's own pull request, so I forget to
-create a ticket and that work goes untracked.
+- I don't like smart commit messages. Commit messages should reference the issue and be a concise, grepable implentation note for your fellow developers. Smart commits muck up the history.
+- I start a story and realize that a refactor, usually to allow for extension, is required before work on the requirements can start. The refactor should be in it's own pull request, so I forget to create a ticket and that work goes untracked.
 
 Paired with git, this project attempts to solve these issues.
