@@ -14,7 +14,7 @@ setup(
     license='MIT',
     keywords='jira',
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=['click', 'requests', 'pyaml'],
+    install_requires=['click', 'requests', 'pyaml', 'gitpython'],
     entry_points='''
         [console_scripts]
         accountable=accountable.cli:cli
