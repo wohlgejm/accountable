@@ -11,6 +11,18 @@ Accountable - a Jira CLI
 
 Never leave the command line to update a ticket again.
 
+Installation
+============
+``pip install accountable``
+
+or
+
+.. code:: bash
+
+  git clone https://github.com/wohlgejm/accountable
+  cd accountable
+  python setup.py install
+
 Quickstart
 ===============
 Installation:
@@ -31,7 +43,9 @@ List all issue types:
 
 Create an issue:
 
-``accountable createissue fields.project.id 10000 fields.issuetype.id 3 fields.summary 'Yuge bug'``
+``accountable createissue project.id 10000 issuetype.id 3 summary 'Yuge bug'``
+
+See the Jira API docs for a full list of fields. Custom fields are also supported.
 
 List metadata for an individual issue:
 
@@ -74,9 +88,9 @@ Accountable can be used in conjunction with git.
 
 For example, if you want to start work and there isn't a ticket created for it, you can use the ``checkoutbranch`` command.
 
-``accountable checkoutbranch fields.summary 'Refactoring foo' fields.project.id 1 fields.issuetype.id 1000``
+``accountable checkoutbranch summary 'Refactoring foo' project.id 1 issuetype.id 1000``
 
-This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary. A new branch will be pushed to origin/HEAD to ensure that if you have automated transitions setup, they will be triggered
+This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary. A new branch will be pushed to origin/HEAD to ensure that if you have automated transitions setup, they will be triggered.
 
 
 TODO

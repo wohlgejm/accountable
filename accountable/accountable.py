@@ -97,7 +97,7 @@ class Accountable(object):
         for arg in zip(args_tuple[0::2], args_tuple[1::2]):
             keys = arg[0].split('.')
             self._set_nested_key(keys, arg[1], d)
-        return d
+        return {'fields': d}
 
     def _set_nested_key(self, key, value, d):
         if isinstance(key, list) and len(key) > 1:

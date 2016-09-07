@@ -22,7 +22,7 @@ def test_issuetypes(mock_object):
     runner = CliRunner()
     result = runner.invoke(cli.issuetypes)
     assert result.exit_code == 0
-    assert result.output == 'AC - 1 - Bug - An error in the code\n'
+    assert result.output == '1 - AC - Bug - An error in the code\n'
 
 
 @mock.patch('accountable.accountable.Resource.get')
@@ -117,7 +117,7 @@ def test_do_transition(mock_object):
 def test_createissue_nargs(mock_object):
     mock_object.return_value = support.issue_create()
     runner = CliRunner()
-    result = runner.invoke(cli.createissue, ['fields.project.id', '1'])
+    result = runner.invoke(cli.createissue, ['project.id', '1'])
     assert result.exit_code == 0
     mock_object.assert_called_once_with('https://testdomain/rest/api/2/issue',
                                         {'fields': {'project': {'id': '1'}}})
@@ -133,8 +133,8 @@ def test_checkoutbranch(mock_post, mock_repo):
     mock_post.return_value = support.issue_create()
     runner = CliRunner()
     result = runner.invoke(cli.checkoutbranch,
-                           ['fields.project.id', '1',
-                            'fields.summary', 'slug me'])
+                           ['project.id', '1',
+                            'summary', 'slug me'])
     assert result.exit_code == 0
     mock_post.assert_called_once_with('https://testdomain/rest/api/2/issue',
                                       {'fields': {'project': {'id': '1'},

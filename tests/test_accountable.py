@@ -32,8 +32,8 @@ class TestAccountable(object):
         mock_get.return_value = support.metadata_response()
         a = support.accountable(tmpdir)
         a._repo = mock.MagicMock(name='_repo')
-        a.checkout_branch(('fields.summary', 'slug me',
-                           'fields.project.id', '1'))
+        a.checkout_branch(('summary', 'slug me',
+                           'project.id', '1'))
         a._repo.return_value.checkout.assert_called_once_with(
             u'HEAD', b=u'TST-24-slug-me'
         )
