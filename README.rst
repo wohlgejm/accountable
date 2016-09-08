@@ -25,10 +25,6 @@ or
 
 Quickstart
 ===============
-Installation:
-
-``pip install accountable``
-
 Once installed, configure your account:
 
 ``accountable configure``
@@ -65,7 +61,7 @@ Do a transition for an issue:
 
 Configuring
 ===========
-Currently, only Basic Auth is supported. Running `accountable configure` will prompt you to enter
+Currently, only Basic Auth is supported. Running ``accountable configure`` will prompt you to enter
 your username, password, and your Jira domain.
 
 Since every account can be setup differently you might want to view custom fields for an issue.
@@ -78,7 +74,7 @@ By default, the following fields are displayed when examining an issue:
 5. Summary
 6. Description
 
-These defaults can be changed by editing your `~/.accountable/config.yaml`. Nesting fields is supported. Check out
+These defaults can be changed by editing your ``~/.accountable/config.yaml``. Nesting fields is supported. Check out
 the Jira documentation `here <https://docs.atlassian.com/jira/REST/latest/#api/2/issue-getIssue>`_ for information
 on fields in the payload.
 
