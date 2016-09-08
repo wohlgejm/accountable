@@ -54,7 +54,7 @@ def issuetypes(project_key):
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
         for i in issue_types:
-            prettyprint(key, i['id'], i['name'], i['description'])
+            prettyprint(i['id'], key, i['name'], i['description'])
 
 
 @click.command()
