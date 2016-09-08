@@ -14,8 +14,8 @@ from accountable.config import Config
 class Accountable(object):
     def __init__(self, **kwargs):
         self.config = Config(**kwargs)
-        self.resource = Resource(self.config.auth)
-        self.api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
+        api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
+        self.resource = Resource(self.config.auth, api_uri)
 
     def projects(self):
         metadata = self._metadata()
@@ -38,8 +38,7 @@ class Accountable(object):
             return issue_types
 
     def issue_meta(self, issue_key):
-        fields = self.resource.get('{}/issue/{}'.format(self.api_uri,
-                                                        issue_key))['fields']
+        fields = self.resource.get('issue/{}'.format(issue_key))['fields']
         data = OrderedDict()
         for field in self.config.issue_fields:
             field_name = self._field_name(field)
@@ -48,8 +47,7 @@ class Accountable(object):
 
     def issue_create(self, options):
         payload = self._args_to_dict(options)
-        return self.resource.post('{}/issue'.format(self.api_uri),
-                                  payload)
+        return self.resource.post('issue', payload)
 
     def checkout_branch(self, options):
         payload = self._args_to_dict(options)
@@ -61,26 +59,23 @@ class Accountable(object):
         return new_issue
 
     def issue_comments(self, issue_key):
-        return self.resource.get('{}/issue/{}/comment'.format(self.api_uri,
-                                                              issue_key))
+        return self.resource.get('issue/{}/comment'.format(issue_key))
 
     def issue_add_comment(self, issue_key, body):
-        return self.resource.post('{}/issue/{}/comment'
-                                  .format(self.api_uri, issue_key),
+        return self.resource.post('issue/{}/comment'.format(issue_key),
                                   {'body': body})
 
     def issue_worklog(self, issue_key):
-        return self.resource.get('{}/issue/{}/worklog'.format(self.api_uri,
-                                                              issue_key))
+        return self.resource.get('issue/{}/worklog'.format(issue_key))
 
     def issue_transitions(self, issue_key):
         return self.resource.get(
-            '{}/issue/{}/transitions'.format(self.api_uri, issue_key)
+            'issue/{}/transitions'.format(issue_key)
         )
 
     def issue_do_transition(self, issue_key, transition_id):
         return self.resource.post(
-            '{}/issue/{}/transitions'.format(self.api_uri, issue_key),
+            'issue/{}/transitions'.format(issue_key),
             {'transition': {'id': transition_id}}
         )
 
@@ -88,8 +83,7 @@ class Accountable(object):
         return Repo(os.getcwd()).git
 
     def _metadata(self):
-        metadata = self.resource.get('{}/issue/createmeta'
-                                     .format(self.api_uri))
+        metadata = self.resource.get('issue/createmeta')
         return metadata
 
     def _args_to_dict(self, args_tuple):
@@ -130,15 +124,18 @@ class Accountable(object):
 
 
 class Resource(object):
-    def __init__(self, auth):
+    def __init__(self, auth, api_uri):
         self.auth = auth
+        self.api_uri = api_uri
 
-    def get(self, endpoint):
-        r = requests.get(endpoint, auth=self.auth)
+    def get(self, resource):
+        r = requests.get('{}/{}'.format(self.api_uri, resource),
+                         auth=self.auth)
         return r.json()
 
-    def post(self, endpoint, payload={}):
-        r = requests.post(endpoint, auth=self.auth,
+    def post(self, resource, payload={}):
+        r = requests.post('{}/{}'.format(self.api_uri, resource),
+                          auth=self.auth,
                           json=payload)
         try:
             return r.json()

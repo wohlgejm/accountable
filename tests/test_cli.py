@@ -119,7 +119,7 @@ def test_createissue_nargs(mock_object):
     runner = CliRunner()
     result = runner.invoke(cli.createissue, ['project.id', '1'])
     assert result.exit_code == 0
-    mock_object.assert_called_once_with('https://testdomain/rest/api/2/issue',
+    mock_object.assert_called_once_with('issue',
                                         {'fields': {'project': {'id': '1'}}})
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
@@ -136,7 +136,7 @@ def test_checkoutbranch(mock_post, mock_repo):
                            ['project.id', '1',
                             'summary', 'slug me'])
     assert result.exit_code == 0
-    mock_post.assert_called_once_with('https://testdomain/rest/api/2/issue',
+    mock_post.assert_called_once_with('issue',
                                       {'fields': {'project': {'id': '1'},
                                                   'summary': 'slug me'}})
     assert result.output == ('10000 - TST-24 - '
