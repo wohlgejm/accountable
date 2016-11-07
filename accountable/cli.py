@@ -5,11 +5,26 @@ import click
 from accountable.accountable import Accountable
 
 
+class AccountableCli(click.Group):
+    ALIASES = {
+        'cob': 'checkoutbranch'
+    }
+
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        alias = self.ALIASES.get(cmd_name, None)
+        if alias is not None:
+            return click.Group.get_command(self, ctx, alias)
+        return None
+
+
 def prettyprint(*args):
     click.echo(' - '.join([arg for arg in args]))
 
 
-@click.group()
+@click.group(cls=AccountableCli)
 def cli():
     """
     A Jira CLI.

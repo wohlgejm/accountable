@@ -142,3 +142,20 @@ def test_checkoutbranch(mock_post, mock_repo):
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
+
+
+@mock.patch('accountable.accountable.Accountable._repo')
+@mock.patch('accountable.accountable.Resource.post')
+def test_cob(mock_post, mock_repo):
+    mock_repo.return_value = support.MockRepo()
+    mock_post.return_value = support.issue_create()
+    runner = CliRunner()
+    result = runner.invoke(cli.cli,
+                           ['cob', 'project.id', '1', 'summary', 'slug me'])
+    assert result.exit_code == 0
+    mock_post.assert_called_once_with('issue',
+                                      {'fields': {'project': {'id': '1'},
+                                                  'summary': 'slug me'}})
+    assert result.output == ('10000 - TST-24 - '
+                             'http://www.example.com/jira/rest/api/2/issue/'
+                             '10000\n')
