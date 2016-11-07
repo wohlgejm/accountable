@@ -37,6 +37,3 @@ class TestAccountable(object):
         a._repo.return_value.checkout.assert_called_once_with(
             u'HEAD', b=u'TST-24-slug-me'
         )
-        a._repo.return_value.push.assert_called_once_with(
-            u'-u', u'origin', u'HEAD'
-        )

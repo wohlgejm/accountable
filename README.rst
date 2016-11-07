@@ -86,7 +86,7 @@ For example, if you want to start work and there isn't a ticket created for it, 
 
 ``accountable checkoutbranch summary 'Refactoring foo' project.id 1 issuetype.id 1000``
 
-This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary. A new branch will be pushed to origin/HEAD to ensure that if you have automated transitions setup, they will be triggered.
+This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary.
 
 
 TODO

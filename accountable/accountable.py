@@ -55,7 +55,6 @@ class Accountable(object):
         summary = payload['fields']['summary']
         key = new_issue['key']
         self._repo().checkout('HEAD', b='{}-{}'.format(key, slugify(summary)))
-        self._repo().push('-u', 'origin', 'HEAD')
         return new_issue
 
     def issue_comments(self, issue_key):
