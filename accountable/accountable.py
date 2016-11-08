@@ -16,6 +16,7 @@ class Accountable(object):
         self.config = Config(**kwargs)
         api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
         self.resource = Resource(self.config.auth, api_uri)
+        self.issue_key = None
 
     def projects(self):
         metadata = self._metadata()
@@ -37,8 +38,8 @@ class Accountable(object):
                 issue_types[project['key']] = project['issuetypes']
             return issue_types
 
-    def issue_meta(self, issue_key):
-        fields = self.resource.get('issue/{}'.format(issue_key))['fields']
+    def issue_meta(self):
+        fields = self.resource.get('issue/{}'.format(self.issue_key))['fields']
         data = OrderedDict()
         for field in self.config.issue_fields:
             field_name = self._field_name(field)
@@ -57,24 +58,24 @@ class Accountable(object):
         self._repo().checkout('HEAD', b='{}-{}'.format(key, slugify(summary)))
         return new_issue
 
-    def issue_comments(self, issue_key):
-        return self.resource.get('issue/{}/comment'.format(issue_key))
+    def issue_comments(self):
+        return self.resource.get('issue/{}/comment'.format(self.issue_key))
 
-    def issue_add_comment(self, issue_key, body):
-        return self.resource.post('issue/{}/comment'.format(issue_key),
+    def issue_add_comment(self, body):
+        return self.resource.post('issue/{}/comment'.format(self.issue_key),
                                   {'body': body})
 
-    def issue_worklog(self, issue_key):
-        return self.resource.get('issue/{}/worklog'.format(issue_key))
+    def issue_worklog(self):
+        return self.resource.get('issue/{}/worklog'.format(self.issue_key))
 
-    def issue_transitions(self, issue_key):
+    def issue_transitions(self):
         return self.resource.get(
-            'issue/{}/transitions'.format(issue_key)
+            'issue/{}/transitions'.format(self.issue_key)
         )
 
-    def issue_do_transition(self, issue_key, transition_id):
+    def issue_do_transition(self, transition_id):
         return self.resource.post(
-            'issue/{}/transitions'.format(issue_key),
+            'issue/{}/transitions'.format(self.issue_key),
             {'transition': {'id': transition_id}}
         )
 

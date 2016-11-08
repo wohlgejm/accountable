@@ -5,6 +5,9 @@ import click
 from accountable.accountable import Accountable
 
 
+pass_accountable = click.make_pass_decorator(Accountable)
+
+
 class AccountableCli(click.Group):
     ALIASES = {
         'cob': 'checkoutbranch'
@@ -25,11 +28,12 @@ def prettyprint(*args):
 
 
 @click.group(cls=AccountableCli)
-def cli():
+@click.pass_context
+def cli(ctx):
     """
     A Jira CLI.
     """
-    pass
+    ctx.obj = Accountable()
 
 
 @click.command()
@@ -48,11 +52,11 @@ def configure(username, password, domain):
 
 
 @click.command()
-def projects():
+@pass_accountable
+def projects(accountable):
     """
     List all projects.
     """
-    accountable = Accountable()
     projects = accountable.projects()
     for pid, key, name in projects:
         prettyprint(pid, key, name)
@@ -60,12 +64,12 @@ def projects():
 
 @click.command()
 @click.argument('project_key', default='')
-def issuetypes(project_key):
+@pass_accountable
+def issuetypes(accountable, project_key):
     """
     List all issue types. Optional parameter to list issue types by a given
     project.
     """
-    accountable = Accountable()
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
         for i in issue_types:
@@ -74,112 +78,104 @@ def issuetypes(project_key):
 
 @click.command()
 @click.argument('options', nargs=-1)
-def createissue(options):
-    accountable = Accountable()
+@pass_accountable
+def createissue(accountable, options):
     issue = accountable.issue_create(options)
     prettyprint(issue['id'], issue['key'], issue['self'])
 
 
 @click.command()
 @click.argument('options', nargs=-1)
-def checkoutbranch(options):
-    accountable = Accountable()
+@pass_accountable
+def checkoutbranch(accountable, options):
     issue = accountable.checkout_branch(options)
     prettyprint(issue['id'], issue['key'], issue['self'])
 
 
 @click.group(invoke_without_command=True)
 @click.argument('issue_key')
+@pass_accountable
 @click.pass_context
-def issue(ctx, issue_key):
+def issue(ctx, accountable, issue_key):
     """
     List metadata for a given issue key. Issue keys should take the format of
     {PROJECT-ID}-{ISSUE-ID}.
     """
-    ctx.obj = {}
-    ctx.obj['issue_key'] = issue_key
+    accountable.issue_key = issue_key
     if not ctx.invoked_subcommand:
-        accountable = Accountable()
-        issue = accountable.issue_meta(issue_key)
+        issue = accountable.issue_meta()
         for field, value in issue.items():
             prettyprint(field, value)
 
 
 @click.command()
-@click.pass_context
-def comments(ctx):
+@pass_accountable
+def comments(accountable):
     """
     Lists all comments for a given issue key.
     """
-    accountable = Accountable()
-    comments = accountable.issue_comments(ctx.obj['issue_key']).get('comments')
+    comments = accountable.issue_comments().get('comments')
     if comments:
         for c in comments:
             prettyprint(c['id'], c['author']['name'], c['body'], c['created'])
     else:
-        prettyprint('No comments found for {}'.format(ctx.obj['issue_key']))
+        prettyprint('No comments found for {}'.format(accountable.issue_key))
 
 
 @click.command()
-@click.pass_context
 @click.argument('body')
-def addcomment(ctx, body):
+@pass_accountable
+def addcomment(accountable, body):
     """
     Add a comment to the given issue key. Accepts a body argument to be used
     as the comment's body.
     """
-    accountable = Accountable()
-    r = accountable.issue_add_comment(ctx.obj['issue_key'], body)
+    r = accountable.issue_add_comment(body)
     prettyprint(r['author']['name'], r['body'], r['created'])
 
 
 @click.command()
-@click.pass_context
-def worklog(ctx):
+@pass_accountable
+def worklog(accountable):
     """
     List all worklogs for a given issue key.
     """
-    accountable = Accountable()
-    worklog = accountable.issue_worklog(ctx.obj['issue_key']).get('worklogs')
+    worklog = accountable.issue_worklog().get('worklogs')
     if worklog:
         for w in worklog:
             prettyprint('Author', w['author']['name'])
             prettyprint('Comment', w.get('comment'))
             prettyprint('Time spent', w['timeSpent'])
     else:
-        prettyprint('No worklogs found for {}'.format(ctx.obj['issue_key']))
+        prettyprint('No worklogs found for {}'.format(accountable.issue_key))
 
 
 @click.command()
-@click.pass_context
-def transitions(ctx):
+@pass_accountable
+def transitions(accountable):
     """
     List all possible transitions for a given issue.
     """
-    accountable = Accountable()
-    transitions = accountable.issue_transitions(
-        ctx.obj['issue_key']
-    ).get('transitions')
+    transitions = accountable.issue_transitions().get('transitions')
     if transitions:
         for t in transitions:
             prettyprint(t['id'], t['name'])
     else:
-        prettyprint('No transitions found for {}'.format(ctx.obj['issue_key']))
+        prettyprint('No transitions found for {}'.format(accountable.issue_key))
 
 
 @click.command()
-@click.pass_context
+@pass_accountable
 @click.argument('transition_id')
-def dotransition(ctx, transition_id):
+def dotransition(accountable, transition_id):
     """
     Transition the given issue to the provided ID. The API does not return a
     JSON response for this call.
     """
-    accountable = Accountable()
-    t = accountable.issue_do_transition(ctx.obj['issue_key'], transition_id)
+    t = accountable.issue_do_transition(transition_id)
     if t.status_code == 204:
         prettyprint(
-            'Successfully transitioned {}'.format(ctx.obj['issue_key'])
+            'Successfully transitioned {}'.format(accountable.issue_key)
         )
 
 

@@ -11,7 +11,7 @@ from tests import support
 def test_projects(mock_object):
     mock_object.return_value = support.projects()
     runner = CliRunner()
-    result = runner.invoke(cli.projects)
+    result = runner.invoke(cli.cli, ['projects'])
     assert result.exit_code == 0
     assert result.output == '1 - AC - Accountable\n2 - EX - Example Project\n'
 
@@ -20,7 +20,7 @@ def test_projects(mock_object):
 def test_issuetypes(mock_object):
     mock_object.return_value = support.issue_types()
     runner = CliRunner()
-    result = runner.invoke(cli.issuetypes)
+    result = runner.invoke(cli.cli, ['issuetypes'])
     assert result.exit_code == 0
     assert result.output == '1 - AC - Bug - An error in the code\n'
 
@@ -29,7 +29,7 @@ def test_issuetypes(mock_object):
 def test_issue(mock_object):
     mock_object.return_value = support.issue()
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101'])
     assert result.exit_code == 0
     assert result.output == ('REPORTER - John Locke\nASSIGNEE - Jack Shepard\n'
                              'ISSUETYPE - Blocker\nSTATUS - In Progress\n'
@@ -41,7 +41,7 @@ def test_issue(mock_object):
 def test_issue_comments(mock_object):
     mock_object.return_value = support.comments()
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'comments'])
     assert result.exit_code == 0
     assert result.output == ('10000 - fred - YUUUGE bug. - '
                              '2016-05-18T12:19:03.615+0000\n')
@@ -51,7 +51,7 @@ def test_issue_comments(mock_object):
 def test_issue_no_comments(mock_object):
     mock_object.return_value = {}
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'comments'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'comments'])
     assert result.exit_code == 0
     assert result.output == 'No comments found for DEV-101\n'
 
@@ -60,7 +60,8 @@ def test_issue_no_comments(mock_object):
 def test_addcomment(mock_object):
     mock_object.return_value = support.comments()['comments'][0]
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'addcomment', 'A comment'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'addcomment',
+                                     'A comment'])
     assert result.exit_code == 0
     assert result.output == ('fred - YUUUGE bug. - '
                              '2016-05-18T12:19:03.615+0000\n')
@@ -70,7 +71,7 @@ def test_addcomment(mock_object):
 def test_issue_worklog(mock_object):
     mock_object.return_value = support.issue_worklog()
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'worklog'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'worklog'])
     assert result.exit_code == 0
     assert result.output == ('Author - fred\n'
                              'Comment - I did some work here.\n'
@@ -81,7 +82,7 @@ def test_issue_worklog(mock_object):
 def test_issue_no_worklog(mock_object):
     mock_object.return_value = {}
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'worklog'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'worklog'])
     assert result.exit_code == 0
     assert result.output == 'No worklogs found for DEV-101\n'
 
@@ -90,7 +91,7 @@ def test_issue_no_worklog(mock_object):
 def test_issue_transitions(mock_object):
     mock_object.return_value = support.issue_transitions()
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'transitions'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'transitions'])
     assert result.exit_code == 0
     assert result.output == '2 - Close Issue\n711 - QA Review\n'
 
@@ -99,7 +100,7 @@ def test_issue_transitions(mock_object):
 def test_issue_no_transitions(mock_object):
     mock_object.return_value = {}
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'transitions'])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'transitions'])
     assert result.exit_code == 0
     assert result.output == 'No transitions found for DEV-101\n'
 
@@ -108,7 +109,8 @@ def test_issue_no_transitions(mock_object):
 def test_do_transition(mock_object):
     mock_object.return_value = support.MockResponse(204)
     runner = CliRunner()
-    result = runner.invoke(cli.issue, ['DEV-101', 'dotransition', str(1)])
+    result = runner.invoke(cli.cli, ['issue', 'DEV-101',
+                                     'dotransition', str(1)])
     assert result.exit_code == 0
     assert result.output == 'Successfully transitioned DEV-101\n'
 
@@ -117,7 +119,7 @@ def test_do_transition(mock_object):
 def test_createissue_nargs(mock_object):
     mock_object.return_value = support.issue_create()
     runner = CliRunner()
-    result = runner.invoke(cli.createissue, ['project.id', '1'])
+    result = runner.invoke(cli.cli, ['createissue', 'project.id', '1'])
     assert result.exit_code == 0
     mock_object.assert_called_once_with('issue',
                                         {'fields': {'project': {'id': '1'}}})
@@ -132,8 +134,8 @@ def test_checkoutbranch(mock_post, mock_repo):
     mock_repo.return_value = support.MockRepo()
     mock_post.return_value = support.issue_create()
     runner = CliRunner()
-    result = runner.invoke(cli.checkoutbranch,
-                           ['project.id', '1',
+    result = runner.invoke(cli.cli,
+                           ['checkoutbranch', 'project.id', '1',
                             'summary', 'slug me'])
     assert result.exit_code == 0
     mock_post.assert_called_once_with('issue',
