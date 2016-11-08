@@ -23,8 +23,12 @@ class AccountableCli(click.Group):
         return None
 
 
-def prettyprint(*args):
-    click.echo(' - '.join([arg for arg in args]))
+def prettyprint(output):
+    if isinstance(output, list):
+        for i in output:
+            click.echo(' - '.join([x for x in i]))
+    else:
+        click.echo(' - '.join([x for x in output]))
 
 
 @click.group(cls=AccountableCli)
@@ -59,7 +63,7 @@ def projects(accountable):
     """
     projects = accountable.projects()
     for pid, key, name in projects:
-        prettyprint(pid, key, name)
+        prettyprint((pid, key, name))
 
 
 @click.command()
@@ -73,7 +77,7 @@ def issuetypes(accountable, project_key):
     projects = accountable.issue_types(project_key)
     for key, issue_types in projects.items():
         for i in issue_types:
-            prettyprint(i['id'], key, i['name'], i['description'])
+            prettyprint((i['id'], key, i['name'], i['description']))
 
 
 @click.command()
@@ -81,7 +85,7 @@ def issuetypes(accountable, project_key):
 @pass_accountable
 def createissue(accountable, options):
     issue = accountable.issue_create(options)
-    prettyprint(issue['id'], issue['key'], issue['self'])
+    prettyprint((issue['id'], issue['key'], issue['self']))
 
 
 @click.command()
@@ -89,7 +93,7 @@ def createissue(accountable, options):
 @pass_accountable
 def checkoutbranch(accountable, options):
     issue = accountable.checkout_branch(options)
-    prettyprint(issue['id'], issue['key'], issue['self'])
+    prettyprint((issue['id'], issue['key'], issue['self']))
 
 
 @click.group(invoke_without_command=True)
@@ -105,7 +109,7 @@ def issue(ctx, accountable, issue_key):
     if not ctx.invoked_subcommand:
         issue = accountable.issue_meta()
         for field, value in issue.items():
-            prettyprint(field, value)
+            prettyprint((field, value))
 
 
 @click.command()
@@ -117,9 +121,10 @@ def comments(accountable):
     comments = accountable.issue_comments().get('comments')
     if comments:
         for c in comments:
-            prettyprint(c['id'], c['author']['name'], c['body'], c['created'])
+            prettyprint((c['id'], c['author']['name'], c['body'],
+                         c['created']))
     else:
-        prettyprint('No comments found for {}'.format(accountable.issue_key))
+        prettyprint(('No comments found for {}'.format(accountable.issue_key), ))
 
 
 @click.command()
@@ -131,7 +136,7 @@ def addcomment(accountable, body):
     as the comment's body.
     """
     r = accountable.issue_add_comment(body)
-    prettyprint(r['author']['name'], r['body'], r['created'])
+    prettyprint((r['author']['name'], r['body'], r['created']))
 
 
 @click.command()
@@ -143,11 +148,11 @@ def worklog(accountable):
     worklog = accountable.issue_worklog().get('worklogs')
     if worklog:
         for w in worklog:
-            prettyprint('Author', w['author']['name'])
-            prettyprint('Comment', w.get('comment'))
-            prettyprint('Time spent', w['timeSpent'])
+            prettyprint(('Author', w['author']['name']))
+            prettyprint(('Comment', w.get('comment')))
+            prettyprint(('Time spent', w['timeSpent']))
     else:
-        prettyprint('No worklogs found for {}'.format(accountable.issue_key))
+        prettyprint(('No worklogs found for {}'.format(accountable.issue_key), ))
 
 
 @click.command()
@@ -159,11 +164,11 @@ def transitions(accountable):
     transitions = accountable.issue_transitions().get('transitions')
     if transitions:
         for t in transitions:
-            prettyprint(t['id'], t['name'])
+            prettyprint((t['id'], t['name']))
     else:
-        prettyprint('No transitions found for {}'.format(
-            accountable.issue_key)
-        )
+        prettyprint(('No transitions found for {}'.format(
+            accountable.issue_key),
+        ))
 
 
 @click.command()
@@ -176,9 +181,9 @@ def dotransition(accountable, transition_id):
     """
     t = accountable.issue_do_transition(transition_id)
     if t.status_code == 204:
-        prettyprint(
-            'Successfully transitioned {}'.format(accountable.issue_key)
-        )
+        prettyprint((
+            'Successfully transitioned {}'.format(accountable.issue_key),
+        ))
 
 
 issue.add_command(dotransition)
