@@ -1,4 +1,5 @@
 import os
+from operator import itemgetter
 
 import click
 import yaml
@@ -22,11 +23,11 @@ class Config(object):
         if kwargs.get('create_config'):
             self._initial_setup(kwargs)
         self.config = self._load_config()
-        self.username = self.config['username']
-        self.password = self.config['password']
-        self.domain = self.config['domain']
+        self.username, self.password, self.domain, self.issue_fields = \
+            itemgetter(
+                'username', 'password', 'domain', 'issue_fields'
+            )(self.config)
         self.auth = HTTPBasicAuth(self.username, self.password)
-        self.issue_fields = self.config['issue_fields']
 
     def _load_config(self):
         with open(self.CONFIG_FILE, 'r') as f:

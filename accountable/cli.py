@@ -161,7 +161,9 @@ def transitions(accountable):
         for t in transitions:
             prettyprint(t['id'], t['name'])
     else:
-        prettyprint('No transitions found for {}'.format(accountable.issue_key))
+        prettyprint('No transitions found for {}'.format(
+            accountable.issue_key)
+        )
 
 
 @click.command()
