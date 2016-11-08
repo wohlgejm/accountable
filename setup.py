@@ -1,7 +1,12 @@
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
+
 
 with open('README.rst') as f:
     long_description = f.read()
+
+install_reqs = parse_requirements('requirements.txt', session=False)
+reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='accountable',
@@ -14,8 +19,7 @@ setup(
     license='MIT',
     keywords='jira',
     packages=find_packages(exclude=['docs', 'tests']),
-    install_requires=['click', 'requests', 'pyaml', 'gitpython',
-                      'python-slugify'],
+    install_requires=reqs,
     entry_points='''
         [console_scripts]
         accountable=accountable.cli:cli
