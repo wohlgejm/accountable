@@ -84,6 +84,9 @@ def issuetypes(accountable, project_key):
 @click.argument('options', nargs=-1)
 @pass_accountable
 def createissue(accountable, options):
+    """
+    Create new issue.
+    """
     issue = accountable.issue_create(options)
     prettyprint((issue['id'], issue['key'], issue['self']))
 
@@ -92,6 +95,9 @@ def createissue(accountable, options):
 @click.argument('options', nargs=-1)
 @pass_accountable
 def checkoutbranch(accountable, options):
+    """
+    Create a new issue and checkout a branch named after it.
+    """
     issue = accountable.checkout_branch(options)
     prettyprint((issue['id'], issue['key'], issue['self']))
 
@@ -124,7 +130,9 @@ def comments(accountable):
             prettyprint((c['id'], c['author']['name'], c['body'],
                          c['created']))
     else:
-        prettyprint(('No comments found for {}'.format(accountable.issue_key), ))
+        prettyprint(('No comments found for {}'.format(
+            accountable.issue_key), )
+        )
 
 
 @click.command()
@@ -152,7 +160,8 @@ def worklog(accountable):
             prettyprint(('Comment', w.get('comment')))
             prettyprint(('Time spent', w['timeSpent']))
     else:
-        prettyprint(('No worklogs found for {}'.format(accountable.issue_key), ))
+        prettyprint(('No worklogs found for {}'.format(accountable.issue_key),
+                     ))
 
 
 @click.command()
