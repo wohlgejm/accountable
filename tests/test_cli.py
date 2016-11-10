@@ -18,14 +18,14 @@ def test_projects(mock_object):
 
 @mock.patch('accountable.accountable.Accountable.issue_types')
 def test_issuetypes(mock_object):
-    mock_object.return_value = support.issue_types()
+    mock_object.return_value = support.issue_types().json()
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issuetypes'])
     assert result.exit_code == 0
     assert result.output == '1 - AC - Bug - An error in the code\n'
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue(mock_object):
     mock_object.return_value = support.issue()
     runner = CliRunner()
@@ -37,7 +37,7 @@ def test_issue(mock_object):
                              'DESCRIPTION - example bug report\n')
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_comments(mock_object):
     mock_object.return_value = support.comments()
     runner = CliRunner()
@@ -47,18 +47,20 @@ def test_issue_comments(mock_object):
                              '2016-05-18T12:19:03.615+0000\n')
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_no_comments(mock_object):
-    mock_object.return_value = {}
+    response = support.MockResponse(200)
+    response.data = {}
+    mock_object.return_value = response
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'comments'])
     assert result.exit_code == 0
     assert result.output == 'No comments found for DEV-101\n'
 
 
-@mock.patch('accountable.accountable.Resource.post')
+@mock.patch('requests.post')
 def test_addcomment(mock_object):
-    mock_object.return_value = support.comments()['comments'][0]
+    mock_object.return_value = support.comment()
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'addcomment',
                                      'A comment'])
@@ -67,7 +69,7 @@ def test_addcomment(mock_object):
                              '2016-05-18T12:19:03.615+0000\n')
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_worklog(mock_object):
     mock_object.return_value = support.issue_worklog()
     runner = CliRunner()
@@ -78,16 +80,18 @@ def test_issue_worklog(mock_object):
                              'Time spent - 3h 20m\n')
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_no_worklog(mock_object):
-    mock_object.return_value = {}
+    response = support.MockResponse(200)
+    response.data = {}
+    mock_object.return_value = response
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'worklog'])
     assert result.exit_code == 0
     assert result.output == 'No worklogs found for DEV-101\n'
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_transitions(mock_object):
     mock_object.return_value = support.issue_transitions()
     runner = CliRunner()
@@ -96,18 +100,22 @@ def test_issue_transitions(mock_object):
     assert result.output == '2 - Close Issue\n711 - QA Review\n'
 
 
-@mock.patch('accountable.accountable.Resource.get')
+@mock.patch('requests.get')
 def test_issue_no_transitions(mock_object):
-    mock_object.return_value = {}
+    response = support.MockResponse(200)
+    response.data = {}
+    mock_object.return_value = response
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'transitions'])
     assert result.exit_code == 0
     assert result.output == 'No transitions found for DEV-101\n'
 
 
-@mock.patch('accountable.accountable.Resource.post')
-def test_do_transition(mock_object):
-    mock_object.return_value = support.MockResponse(204)
+@mock.patch('requests.post')
+def test_do_transition(mock_post):
+    transition = support.MockResponse(204)
+    transition.data = float('-inf')
+    mock_post.return_value = transition
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101',
                                      'dotransition', str(1)])
@@ -115,21 +123,19 @@ def test_do_transition(mock_object):
     assert result.output == 'Successfully transitioned DEV-101\n'
 
 
-@mock.patch('accountable.accountable.Resource.post')
-def test_createissue_nargs(mock_object):
-    mock_object.return_value = support.issue_create()
+@mock.patch('requests.post')
+def test_createissue_nargs(mock_post):
+    mock_post.return_value = support.issue_create()
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['createissue', 'project.id', '1'])
     assert result.exit_code == 0
-    mock_object.assert_called_once_with('issue',
-                                        {'fields': {'project': {'id': '1'}}})
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
-@mock.patch('accountable.accountable.Resource.post')
+@mock.patch('requests.post')
 def test_checkoutbranch(mock_post, mock_repo):
     mock_repo.return_value = support.MockRepo()
     mock_post.return_value = support.issue_create()
@@ -138,16 +144,13 @@ def test_checkoutbranch(mock_post, mock_repo):
                            ['checkoutbranch', 'project.id', '1',
                             'summary', 'slug me'])
     assert result.exit_code == 0
-    mock_post.assert_called_once_with('issue',
-                                      {'fields': {'project': {'id': '1'},
-                                                  'summary': 'slug me'}})
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
-@mock.patch('accountable.accountable.Resource.post')
+@mock.patch('requests.post')
 def test_cob(mock_post, mock_repo):
     mock_repo.return_value = support.MockRepo()
     mock_post.return_value = support.issue_create()
@@ -155,16 +158,13 @@ def test_cob(mock_post, mock_repo):
     result = runner.invoke(cli.cli,
                            ['cob', 'project.id', '1', 'summary', 'slug me'])
     assert result.exit_code == 0
-    mock_post.assert_called_once_with('issue',
-                                      {'fields': {'project': {'id': '1'},
-                                                  'summary': 'slug me'}})
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
-@mock.patch('accountable.accountable.Resource.post')
+@mock.patch('requests.post')
 @mock.patch('accountable.accountable.Accountable.aliases')
 def test_custom_alias(mock_aliases, mock_post, mock_repo):
     mock_aliases.return_value = {'custom': 'checkoutbranch'}
@@ -174,16 +174,13 @@ def test_custom_alias(mock_aliases, mock_post, mock_repo):
     result = runner.invoke(cli.cli,
                            ['custom', 'project.id', '1', 'summary', 'slug me'])
     assert result.exit_code == 0
-    mock_post.assert_called_once_with('issue',
-                                      {'fields': {'project': {'id': '1'},
-                                                  'summary': 'slug me'}})
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
-@mock.patch('accountable.accountable.Resource.post')
+@mock.patch('requests.post')
 def test_alias_not_found(mock_post, mock_repo):
     mock_repo.return_value = support.MockRepo()
     mock_post.return_value = support.issue_create()

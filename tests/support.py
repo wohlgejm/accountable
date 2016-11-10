@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from accountable.config import Config
@@ -7,6 +9,10 @@ from accountable.accountable import Accountable
 class MockResponse(object):
     def __init__(self, status_code):
         self.status_code = status_code
+        self.data = None
+
+    def json(self):
+        return json.loads(json.dumps(self.data, allow_nan=False))
 
     def status_code(self):
         return self.status_code
@@ -34,15 +40,20 @@ def projects():
         ('2', 'EX', 'Example Project')
     ]
 
+
 def issue_create():
-    return {
+    response = MockResponse(200)
+    response.data = {
             "id": "10000",
             "key": "TST-24",
             "self": "http://www.example.com/jira/rest/api/2/issue/10000"
             }
+    return response
+
 
 def issue_types():
-    return {
+    response = MockResponse(200)
+    response.data = {
         'AC': [{
             "self": "http://www.example.com/jira/rest/api/2/issueType/1",
             "id": "1",
@@ -62,10 +73,12 @@ def issue_types():
             }
         }]
     }
+    return response
 
 
 def issue():
-    return {
+    response = MockResponse(200)
+    response.data = {
     "expand": "renderedFields,names,schema,transitions,operations,editmeta,changelog,versionedRepresentations",
     "id": "10002",
     "self": "http://www.example.com/jira/rest/api/2/issue/10002",
@@ -271,11 +284,13 @@ def issue():
         "timetracking": "timetracking"
     },
     "schema": {}
-}
+    }
+    return response
 
 
 def metadata_response():
-    return {
+    response = MockResponse(200)
+    response.data = {
         "expand": "projects",
         "projects": [
             {
@@ -344,10 +359,12 @@ def metadata_response():
             }
         ]
     }
+    return response
 
 
 def worklog():
-    return {
+    response = MockResponse(200)
+    response.data = {
     "startAt": 0,
     "maxResults": 1,
     "total": 1,
@@ -379,10 +396,40 @@ def worklog():
             "issueId": "10002"
         }
     ]
-}
+    }
+    return response
+
+
+def comment():
+    response = MockResponse(200)
+    response.data = {
+        "self": "http://www.example.com/jira/rest/api/2/issue/10010/comment/10000",
+        "id": "10000",
+        "author": {
+            "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+            "name": "fred",
+            "displayName": "Fred F. User",
+            "active": False
+        },
+        "body": "YUUUGE bug.",
+        "updateAuthor": {
+            "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+            "name": "fred",
+            "displayName": "Fred F. User",
+            "active": False
+        },
+        "created": "2016-05-18T12:19:03.615+0000",
+        "updated": "2016-05-18T12:19:03.615+0000",
+        "visibility": {
+            "type": "role",
+            "value": "Administrators"
+        }
+    }
+    return response
 
 def comments():
-    return {
+    response = MockResponse(200)
+    response.data = {
         "startAt": 0,
         "maxResults": 1,
         "total": 1,
@@ -412,10 +459,12 @@ def comments():
             }
         ]
     }
+    return response
 
 
 def issue_worklog():
-    return {
+    response = MockResponse(200)
+    response.data = {
         "startAt": 0,
         "maxResults": 1,
         "total": 1,
@@ -448,10 +497,12 @@ def issue_worklog():
             }
         ]
     }
+    return response
 
 
 def issue_transitions():
-    return {
+    response = MockResponse(200)
+    response.data = {
         "expand": "transitions",
         "transitions": [
             {
@@ -552,6 +603,7 @@ def issue_transitions():
             }
         ]
     }
+    return response
 
 
 @pytest.fixture
