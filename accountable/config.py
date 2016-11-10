@@ -18,6 +18,7 @@ class Config(object):
         'summary',
         'description'
     ]
+    DEFAULT_ALIASES = {'cob': 'checkoutbranch'}
 
     def __init__(self, **kwargs):
         if kwargs.get('create_config'):
@@ -51,7 +52,8 @@ class Config(object):
             'username': username,
             'password': password,
             'domain': domain,
-            'issue_fields': self.DEFAULT_ISSUE_FIELDS
+            'issue_fields': self.DEFAULT_ISSUE_FIELDS,
+            'aliases': self.DEFAULT_ALIASES
         }
         return config
 

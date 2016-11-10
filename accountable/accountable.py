@@ -24,6 +24,9 @@ class Accountable(object):
                  project['key'],
                  project['name']) for project in metadata['projects']]
 
+    def aliases(self):
+        return self.config.config.get('aliases')
+
     def issue_types(self, project_key):
         metadata = self._metadata()
         if project_key:
