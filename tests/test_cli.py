@@ -180,3 +180,17 @@ def test_custom_alias(mock_aliases, mock_post, mock_repo):
     assert result.output == ('10000 - TST-24 - '
                              'http://www.example.com/jira/rest/api/2/issue/'
                              '10000\n')
+
+
+@mock.patch('accountable.accountable.Accountable._repo')
+@mock.patch('accountable.accountable.Resource.post')
+def test_alias_not_found(mock_post, mock_repo):
+    mock_repo.return_value = support.MockRepo()
+    mock_post.return_value = support.issue_create()
+    runner = CliRunner()
+    result = runner.invoke(cli.cli,
+                           ['notthere', 'project.id', '1', 'summary',
+                            'slug me'])
+    assert result.exit_code == 2
+    assert result.output == 'Usage: cli [OPTIONS] COMMAND [ARGS]...\n\n' \
+                            'Error: No such command "notthere".\n'
