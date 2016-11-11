@@ -18,7 +18,8 @@ class Config(object):
         'summary',
         'description'
     ]
-    DEFAULT_ALIASES = {'cob': 'checkoutbranch'}
+    DEFAULT_ALIASES = {'cob': 'checkoutbranch',
+                       'co': 'checkout'}
 
     def __init__(self, **kwargs):
         if kwargs.get('create_config'):
