@@ -204,3 +204,14 @@ def test_alias_not_found(mock_post, mock_repo):
     assert result.exit_code == 2
     assert result.output == 'Usage: cli [OPTIONS] COMMAND [ARGS]...\n\n' \
                             'Error: No such command "notthere".\n'
+
+
+@mock.patch('requests.get')
+def test_users(mock_get):
+    mock_get.return_value = support.users()
+    runner = CliRunner()
+    result = runner.invoke(cli.cli,
+                           ['users', 'e'])
+    assert result.exit_code == 0
+    assert result.output == ('fred - Fred F. User\n'
+                             'andrew - Andrew Anderson\n')

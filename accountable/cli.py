@@ -202,6 +202,17 @@ def dotransition(accountable, transition_id):
         ))
 
 
+@click.command()
+@pass_accountable
+@click.argument('query')
+def users(accountable, query):
+    """
+    Executes a user search for the given query.
+    """
+    users = accountable.users(query)
+    prettyprint([(user['key'], user['displayName']) for user in users])
+
+
 issue.add_command(dotransition)
 issue.add_command(transitions)
 issue.add_command(worklog)
@@ -213,6 +224,7 @@ cli.add_command(projects)
 cli.add_command(issuetypes)
 cli.add_command(issue)
 cli.add_command(createissue)
+cli.add_command(users)
 cli.add_command(checkoutbranch)
 cli.add_command(checkout)
 

@@ -102,6 +102,11 @@ class Accountable(object):
             {'transition': {'id': transition_id}}
         )
 
+    def users(self, query):
+        payload = self.resource.get('user/search',
+                                    params={'username': query})
+        return payload
+
     def _repo(self):
         return Repo(os.getcwd()).git
 
@@ -151,8 +156,9 @@ class Resource(object):
         self.auth = auth
         self.api_uri = api_uri
 
-    def get(self, resource):
+    def get(self, resource, params={}):
         r = requests.get('{}/{}'.format(self.api_uri, resource),
+                         params=params,
                          auth=self.auth)
         return r.json()
 

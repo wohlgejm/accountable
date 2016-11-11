@@ -28,6 +28,7 @@ class MockRepo(object):
     def push(*args, **kwargs):
         pass
 
+
 def config_values():
     return {
         'username': 'testusername',
@@ -500,6 +501,39 @@ def issue_worklog():
             }
         ]
     }
+    return response
+
+
+def users():
+    response = MockResponse(200)
+    response.data = [
+        {
+            "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+            "key": "fred",
+            "name": "fred",
+            "avatarUrls": {
+                "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+            },
+            "displayName": "Fred F. User",
+            "active": False
+        },
+        {
+            "self": "http://www.example.com/jira/rest/api/2/user?username=andrew",
+            "key": "andrew",
+            "name": "andrew",
+            "avatarUrls": {
+                "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=andrew",
+                "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=andrew",
+                "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=andrew",
+                "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=andrew"
+            },
+            "displayName": "Andrew Anderson",
+            "active": False
+        }
+    ]
     return response
 
 
