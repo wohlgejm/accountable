@@ -88,6 +88,17 @@ def createissue(accountable, options):
 
 
 @click.command()
+@click.argument('issue_key')
+@pass_accountable
+def checkout(accountable, issue_key):
+    """
+    Checkout a new branch or checkout to a branch for a given issue.
+    """
+    issue = accountable.checkout(issue_key)
+    prettyprint((issue['id'], issue['key'], issue['self']))
+
+
+@click.command()
 @click.argument('options', nargs=-1)
 @pass_accountable
 def checkoutbranch(accountable, options):
@@ -203,6 +214,7 @@ cli.add_command(issuetypes)
 cli.add_command(issue)
 cli.add_command(createissue)
 cli.add_command(checkoutbranch)
+cli.add_command(checkout)
 
 
 if __name__ == '__main__':

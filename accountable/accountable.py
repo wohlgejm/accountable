@@ -41,8 +41,12 @@ class Accountable(object):
                 issue_types[project['key']] = project['issuetypes']
             return issue_types
 
+    def issue(self):
+        return self.resource.get('issue/{}'.format(self.issue_key))
+
     def issue_meta(self):
-        fields = self.resource.get('issue/{}'.format(self.issue_key))['fields']
+        fields = self.issue()['fields']
+
         data = OrderedDict()
         for field in self.config.issue_fields:
             field_name = self._field_name(field)
@@ -60,6 +64,22 @@ class Accountable(object):
         key = new_issue['key']
         self._repo().checkout('HEAD', b='{}-{}'.format(key, slugify(summary)))
         return new_issue
+
+    def checkout(self, issue_key):
+        self.issue_key = issue_key
+        issue = self.issue()
+        issue_data = {
+            'self': issue['self'],
+            'id': issue['id'],
+            'key': issue['key']
+        }
+        branch_name = '{}-{}'.format(issue_key, slugify(
+            issue['fields']['summary'])
+        )
+
+        self._repo().branch('-f', branch_name)
+        self._repo().checkout(branch_name)
+        return issue_data
 
     def issue_comments(self):
         return self.resource.get('issue/{}/comment'.format(self.issue_key))

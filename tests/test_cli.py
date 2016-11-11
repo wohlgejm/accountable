@@ -150,6 +150,19 @@ def test_checkoutbranch(mock_post, mock_repo):
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
+@mock.patch('requests.get')
+def test_checkout(mock_get, mock_repo):
+    mock_repo.return_value = support.MockRepo()
+    mock_get.return_value = support.issue()
+    runner = CliRunner()
+    result = runner.invoke(cli.cli, ['checkout', 'TST-24'])
+    assert result.exit_code == 0
+    assert result.output == ('10002 - EX-1 - '
+                             'http://www.example.com/jira/rest/api/2/issue/'
+                             '10002\n')
+
+
+@mock.patch('accountable.accountable.Accountable._repo')
 @mock.patch('requests.post')
 def test_cob(mock_post, mock_repo):
     mock_repo.return_value = support.MockRepo()

@@ -22,6 +22,9 @@ class MockRepo(object):
     def checkout(*args, **kwargs):
         pass
 
+    def branch(*args, **kwargs):
+        pass
+
     def push(*args, **kwargs):
         pass
 
