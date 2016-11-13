@@ -14,7 +14,7 @@ from accountable.config import Config
 class Accountable(object):
     def __init__(self, **kwargs):
         self.config = Config(**kwargs)
-        api_uri = 'https://{}/rest/api/2'.format(self.config.domain)
+        api_uri = 'https://{}/rest/api/2'.format(self.config['domain'])
         self.resource = Resource(self.config.auth, api_uri)
         self.issue_key = None
 
@@ -25,7 +25,7 @@ class Accountable(object):
                  project['name']) for project in metadata['projects']]
 
     def aliases(self):
-        return self.config.config.get('aliases')
+        return self.config['aliases']
 
     def issue_types(self, project_key):
         metadata = self._metadata()
@@ -48,7 +48,7 @@ class Accountable(object):
         fields = self.issue()['fields']
 
         data = OrderedDict()
-        for field in self.config.issue_fields:
+        for field in self.config['issue_fields']:
             field_name = self._field_name(field)
             data[field_name] = self._access_field(field, fields)
         return data

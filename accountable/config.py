@@ -1,5 +1,4 @@
 import os
-from operator import itemgetter
 
 import click
 import yaml
@@ -24,17 +23,17 @@ class Config(object):
     def __init__(self, **kwargs):
         self.kwargs = kwargs
         self._config = None
-        self.username, self.password, self.domain, self.issue_fields = \
-            itemgetter(
-                'username', 'password', 'domain', 'issue_fields'
-            )(self.config)
-        self.auth = HTTPBasicAuth(self.username, self.password)
+        self.auth = HTTPBasicAuth(self['username'], self['password'])
+
+    def __getitem__(self, name):
+        return self.config[name]
 
     @property
     def config(self):
-        if self.kwargs.get('create_config'):
+        if self.kwargs.get('create_config') and self._config is None:
             self._initial_setup(self.kwargs)
-        self._config = self._load_config()
+        if self._config is None:
+            self._config = self._load_config()
         return self._config
 
     def _load_config(self):
@@ -55,14 +54,13 @@ class Config(object):
             os.makedirs(self.CONFIG_DIR)
 
     def _config_dict(self, username, password, domain):
-        config = {
+        return {
             'username': username,
             'password': password,
             'domain': domain,
             'issue_fields': self.DEFAULT_ISSUE_FIELDS,
             'aliases': self.DEFAULT_ALIASES
         }
-        return config
 
     def _create_config(self, config_dict):
         self._create_config_dir()
