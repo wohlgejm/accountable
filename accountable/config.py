@@ -22,14 +22,20 @@ class Config(object):
                        'co': 'checkout'}
 
     def __init__(self, **kwargs):
-        if kwargs.get('create_config'):
-            self._initial_setup(kwargs)
-        self.config = self._load_config()
+        self.kwargs = kwargs
+        self._config = None
         self.username, self.password, self.domain, self.issue_fields = \
             itemgetter(
                 'username', 'password', 'domain', 'issue_fields'
             )(self.config)
         self.auth = HTTPBasicAuth(self.username, self.password)
+
+    @property
+    def config(self):
+        if self.kwargs.get('create_config'):
+            self._initial_setup(self.kwargs)
+        self._config = self._load_config()
+        return self._config
 
     def _load_config(self):
         with open(self.CONFIG_FILE, 'r') as f:
@@ -60,6 +66,6 @@ class Config(object):
 
     def _create_config(self, config_dict):
         self._create_config_dir()
-        with open(self.CONFIG_FILE, 'w') as f:
+        with open(self.CONFIG_FILE, 'w+') as f:
             f.write(yaml.dump(config_dict, default_flow_style=False))
         click.echo('Configuration file written to {}'.format(self.CONFIG_FILE))
