@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import click
 
-from accountable.accountable import Accountable
+from accountable.accountable import Accountable, Config
 
 
 pass_accountable = click.make_pass_decorator(Accountable)
@@ -45,10 +45,7 @@ def configure(username, password, domain):
     Initial configuration. Used to specify your username, password and domain.
     Configuration is stored in ~/.accountable/config.yaml.
     """
-    Accountable(username=username,
-                password=password,
-                domain=domain,
-                create_config=True)
+    Config().create(username=username, password=password, domain=domain)
 
 
 @click.command()

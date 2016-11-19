@@ -12,10 +12,8 @@ from accountable.config import Config
 
 
 class Accountable(object):
-    def __init__(self, **kwargs):
-        self.config = Config(**kwargs)
-        api_uri = 'https://{}/rest/api/2'.format(self.config['domain'])
-        self.resource = Resource(self.config.auth, api_uri)
+    def __init__(self):
+        self.config = Config()
         self.issue_key = None
 
     def projects(self):
@@ -26,6 +24,11 @@ class Accountable(object):
 
     def aliases(self):
         return self.config['aliases']
+
+    @property
+    def resource(self):
+        api_uri = 'https://{}/rest/api/2'.format(self.config['domain'])
+        return Resource(self.config.auth, api_uri)
 
     def issue_types(self, project_key):
         metadata = self._metadata()

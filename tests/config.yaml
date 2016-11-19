@@ -1,0 +1,14 @@
+aliases:
+  co: checkout
+  cob: checkoutbranch
+domain: testdomain
+issue_fields:
+- reporter: displayName
+- assignee: displayName
+- issuetype: name
+- status:
+    statusCategory: name
+- summary
+- description
+password: testpassword
+username: testusername

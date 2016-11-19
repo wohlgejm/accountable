@@ -1,16 +1,39 @@
 from __future__ import absolute_import
 
+import os
+import sys
+import io
+
 from click.testing import CliRunner
 import mock
 import requests
-from doubles import allow
+from doubles import no_builtin_verification, allow, expect
 
 from accountable import cli
+from accountable.config import Config
 from tests import support
+
+
+def test_configure():
+    with no_builtin_verification():
+        i = __import__(('builtins' if sys.version_info >= (3,)
+                        else '__builtin__'))
+        allow(os.path).exists.and_return(False)
+        expect(i).open.with_args(Config().config_file, 'w+').and_return(
+            io.BytesIO()
+        )
+        expect(os).makedirs.with_args(Config.CONFIG_DIR)
+        runner = CliRunner()
+        result = runner.invoke(cli.cli, ['configure'],
+                               input='user\npassowrd\ndomain\n')
+        assert result.exit_code == 0
 
 
 @mock.patch('accountable.accountable.Accountable.projects')
 def test_projects(mock_object):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     mock_object.return_value = support.projects()
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['projects'])
@@ -20,6 +43,9 @@ def test_projects(mock_object):
 
 @mock.patch('accountable.accountable.Accountable.issue_types')
 def test_issuetypes(mock_object):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     mock_object.return_value = support.issue_types().json()
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issuetypes'])
@@ -28,6 +54,9 @@ def test_issuetypes(mock_object):
 
 
 def test_issue():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.issue())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101'])
@@ -39,6 +68,9 @@ def test_issue():
 
 
 def test_issue_comments():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.comments())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'comments'])
@@ -48,6 +80,9 @@ def test_issue_comments():
 
 
 def test_issue_no_comments():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     response = support.MockResponse(200)
     response.data = {}
     allow(requests).get.and_return(response)
@@ -58,6 +93,9 @@ def test_issue_no_comments():
 
 
 def test_addcomment():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.comment())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'addcomment',
@@ -68,6 +106,9 @@ def test_addcomment():
 
 
 def test_issue_worklog():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.issue_worklog())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'worklog'])
@@ -78,6 +119,9 @@ def test_issue_worklog():
 
 
 def test_issue_no_worklog():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     response = support.MockResponse(200)
     response.data = {}
     allow(requests).get.and_return(response)
@@ -88,6 +132,9 @@ def test_issue_no_worklog():
 
 
 def test_issue_transitions():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.issue_transitions())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'transitions'])
@@ -96,6 +143,9 @@ def test_issue_transitions():
 
 
 def test_issue_no_transitions():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     response = support.MockResponse(200)
     response.data = {}
     allow(requests).get.and_return(response)
@@ -106,6 +156,9 @@ def test_issue_no_transitions():
 
 
 def test_do_transition():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     transition = support.MockResponse(204)
     transition.data = float('-inf')
     allow(requests).post.and_return(transition)
@@ -117,6 +170,9 @@ def test_do_transition():
 
 
 def test_createissue_nargs():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.issue_create())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['createissue', 'project.id', '1'])
@@ -128,6 +184,9 @@ def test_createissue_nargs():
 
 @mock.patch('accountable.accountable.Accountable._repo')
 def test_checkoutbranch(mock_repo):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.issue_create())
     mock_repo.return_value = support.MockRepo()
     runner = CliRunner()
@@ -142,6 +201,9 @@ def test_checkoutbranch(mock_repo):
 
 @mock.patch('accountable.accountable.Accountable._repo')
 def test_checkout(mock_repo):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.issue())
     mock_repo.return_value = support.MockRepo()
     runner = CliRunner()
@@ -154,6 +216,9 @@ def test_checkout(mock_repo):
 
 @mock.patch('accountable.accountable.Accountable._repo')
 def test_cob(mock_repo):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.issue_create())
     mock_repo.return_value = support.MockRepo()
     runner = CliRunner()
@@ -168,6 +233,9 @@ def test_cob(mock_repo):
 @mock.patch('accountable.accountable.Accountable._repo')
 @mock.patch('accountable.accountable.Accountable.aliases')
 def test_custom_alias(mock_aliases, mock_repo):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.issue_create())
     mock_aliases.return_value = {'custom': 'checkoutbranch'}
     mock_repo.return_value = support.MockRepo()
@@ -182,6 +250,9 @@ def test_custom_alias(mock_aliases, mock_repo):
 
 @mock.patch('accountable.accountable.Accountable._repo')
 def test_alias_not_found(mock_repo):
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).post.and_return(support.issue_create())
     mock_repo.return_value = support.MockRepo()
     runner = CliRunner()
@@ -194,6 +265,9 @@ def test_alias_not_found(mock_repo):
 
 
 def test_users():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
     allow(requests).get.and_return(support.users())
     runner = CliRunner()
     result = runner.invoke(cli.cli,
