@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from functools import update_wrapper
+
 import click
 
 from accountable.accountable import Accountable, Config
@@ -73,9 +75,17 @@ def issuetypes(accountable, project_key):
             prettyprint((i['id'], key, i['name'], i['description']))
 
 
+def nargs(f):
+    @click.argument('options', nargs=-1)
+    @pass_accountable
+    @click.pass_context
+    def new_func(ctx, accountable, options, *args, **kwargs):
+        return ctx.invoke(f, accountable, options, *args, **kwargs)
+    return update_wrapper(new_func, f)
+
+
 @click.command()
-@click.argument('options', nargs=-1)
-@pass_accountable
+@nargs
 def createissue(accountable, options):
     """
     Create new issue.
@@ -96,8 +106,7 @@ def checkout(accountable, issue_key):
 
 
 @click.command()
-@click.argument('options', nargs=-1)
-@pass_accountable
+@nargs
 def checkoutbranch(accountable, options):
     """
     Create a new issue and checkout a branch named after it.

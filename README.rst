@@ -8,6 +8,9 @@ Accountable - a Jira CLI
 .. image:: https://requires.io/github/wohlgejm/accountable/requirements.svg?branch=master
      :target: https://requires.io/github/wohlgejm/accountable/requirements/?branch=master
      :alt: Requirements Status
+.. image:: https://codeclimate.com/github/wohlgejm/accountable/badges/gpa.svg
+   :target: https://codeclimate.com/github/wohlgejm/accountable
+   :alt: Code Climate
 
 Never leave the command line to update a ticket again.
 
