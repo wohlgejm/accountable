@@ -95,6 +95,16 @@ def createissue(accountable, options):
 
 
 @click.command()
+@nargs
+def checkoutbranch(accountable, options):
+    """
+    Create a new issue and checkout a branch named after it.
+    """
+    issue = accountable.checkout_branch(options)
+    prettyprint((issue['id'], issue['key'], issue['self']))
+
+
+@click.command()
 @click.argument('issue_key')
 @pass_accountable
 def checkout(accountable, issue_key):
@@ -102,16 +112,6 @@ def checkout(accountable, issue_key):
     Checkout a new branch or checkout to a branch for a given issue.
     """
     issue = accountable.checkout(issue_key)
-    prettyprint((issue['id'], issue['key'], issue['self']))
-
-
-@click.command()
-@nargs
-def checkoutbranch(accountable, options):
-    """
-    Create a new issue and checkout a branch named after it.
-    """
-    issue = accountable.checkout_branch(options)
     prettyprint((issue['id'], issue['key'], issue['self']))
 
 
