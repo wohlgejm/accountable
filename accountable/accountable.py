@@ -114,8 +114,7 @@ class Accountable(object):
         return Repo(os.getcwd()).git
 
     def _metadata(self):
-        metadata = self.resource.get('issue/createmeta')
-        return metadata
+        return self.resource.get('issue/createmeta')
 
     def _args_to_dict(self, args_tuple):
         d = {}

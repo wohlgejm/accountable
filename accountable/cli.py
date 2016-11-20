@@ -70,7 +70,7 @@ def issuetypes(accountable, project_key):
     project.
     """
     projects = accountable.issue_types(project_key)
-    for key, issue_types in projects.items():
+    for key, issue_types in sorted(projects.items()):
         for i in issue_types:
             prettyprint((i['id'], key, i['name'], i['description']))
 
