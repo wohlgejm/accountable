@@ -41,14 +41,25 @@ def test_projects():
                             '10000 - AC - Accountable\n'
 
 
-@mock.patch('accountable.accountable.Accountable.issue_types')
-def test_issuetypes(mock_object):
+def test_issuetypes():
     allow(Config).config_file.and_return(
         '{}/tests/config.yaml'.format(os.getcwd())
     )
-    mock_object.return_value = support.issue_types().json()
+    allow(requests).get.and_return(support.metadata_response())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['issuetypes'])
+    assert result.exit_code == 0
+    assert result.output == '1 - AC - Bug - An error in the code\n' \
+                            '1 - EX - Bug - An error in the code\n'
+
+
+def test_issuetypes_project():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
+    allow(requests).get.and_return(support.metadata_response())
+    runner = CliRunner()
+    result = runner.invoke(cli.cli, ['issuetypes', 'AC'])
     assert result.exit_code == 0
     assert result.output == '1 - AC - Bug - An error in the code\n'
 
