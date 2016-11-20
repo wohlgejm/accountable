@@ -29,16 +29,16 @@ def test_configure():
         assert result.exit_code == 0
 
 
-@mock.patch('accountable.accountable.Accountable.projects')
-def test_projects(mock_object):
+def test_projects():
     allow(Config).config_file.and_return(
         '{}/tests/config.yaml'.format(os.getcwd())
     )
-    mock_object.return_value = support.projects()
+    allow(requests).get.and_return(support.metadata_response())
     runner = CliRunner()
     result = runner.invoke(cli.cli, ['projects'])
     assert result.exit_code == 0
-    assert result.output == '1 - AC - Accountable\n2 - EX - Example Project\n'
+    assert result.output == '10000 - EX - Example Project\n' \
+                            '10000 - AC - Accountable\n'
 
 
 @mock.patch('accountable.accountable.Accountable.issue_types')
