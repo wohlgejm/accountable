@@ -53,11 +53,11 @@ class Accountable(object):
         return data
 
     def issue_create(self, options):
-        payload = self._args_to_dict(options)
+        payload = Nargs(options)
         return self.resource.post('issue', payload)
 
     def checkout_branch(self, options):
-        payload = self._args_to_dict(options)
+        payload = Nargs(options)
         new_issue = self.issue_create(options)
         summary = payload['fields']['summary']
         key = new_issue['key']
@@ -115,24 +115,6 @@ class Accountable(object):
     def _metadata(self):
         return self.resource.get('issue/createmeta')
 
-    def _args_to_dict(self, args_tuple):
-        d = {}
-        for arg in zip(args_tuple[0::2], args_tuple[1::2]):
-            keys = arg[0].split('.')
-            self._set_nested_key(keys, arg[1], d)
-        return {'fields': d}
-
-    def _set_nested_key(self, key, value, d):
-        if isinstance(key, list) and len(key) > 1:
-            head, tail = key[0], key[1:]
-            if not d.get(head):
-                d[head] = {}
-            self._set_nested_key(tail, value, d[head])
-        else:
-            d[list(key)[0]] = value
-
-        return d
-
     @staticmethod
     def _access_field(field, d):
         if isinstance(field, str):
@@ -150,3 +132,31 @@ class Accountable(object):
             return field.upper()
         else:
             return list(field.keys())[0].upper()
+
+
+class Nargs(object):
+    def __init__(self, options):
+        self._dict = self._args_to_dict(options)
+
+    def __repr__(self):
+        return repr(self._dict)
+
+    def __getitem__(self, key):
+        return self._dict[key]
+
+    def _args_to_dict(self, args_tuple):
+        d = {}
+        for arg in zip(args_tuple[0::2], args_tuple[1::2]):
+            keys = arg[0].split('.')
+            self._set_nested_key(keys, arg[1], d)
+        return {'fields': d}
+
+    def _set_nested_key(self, key, value, d):
+        if isinstance(key, list) and len(key) > 1:
+            head, tail = key[0], key[1:]
+            if not d.get(head):
+                d[head] = {}
+            self._set_nested_key(tail, value, d[head])
+        else:
+            d[list(key)[0]] = value
+        return d
