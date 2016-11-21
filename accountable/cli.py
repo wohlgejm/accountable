@@ -57,9 +57,9 @@ def projects(accountable):
     """
     List all projects.
     """
-    projects = accountable.projects()
-    for pid, key, name in projects:
-        prettyprint((pid, key, name))
+    projects = accountable.metadata()
+    prettyprint([itemgetter('id', 'key', 'name')(p)
+                 for p in projects['projects']])
 
 
 @click.command()

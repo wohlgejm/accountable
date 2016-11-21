@@ -15,18 +15,12 @@ class Accountable(object):
     def __init__(self):
         self.issue_key = None
 
-    def projects(self):
-        metadata = self._metadata()
-        return [(project['id'],
-                 project['key'],
-                 project['name']) for project in metadata['projects']]
-
     @property
     def resource(self):
         return Resource()
 
     def issue_types(self, project_key):
-        metadata = self._metadata()
+        metadata = self.metadata()
         if project_key:
             project = next(
                 project for project in metadata['projects']
@@ -38,6 +32,9 @@ class Accountable(object):
             for project in metadata['projects']:
                 issue_types[project['key']] = project['issuetypes']
             return issue_types
+
+    def metadata(self):
+        return self.resource.get('issue/createmeta')
 
     def issue(self):
         return self.resource.get('issue/{}'.format(self.issue_key))
@@ -110,9 +107,6 @@ class Accountable(object):
 
     def _repo(self):
         return Repo(os.getcwd()).git
-
-    def _metadata(self):
-        return self.resource.get('issue/createmeta')
 
     @staticmethod
     def _access_field(field, d):
