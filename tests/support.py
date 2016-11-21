@@ -38,6 +38,113 @@ def config_values():
     }
 
 
+def project_components():
+    response = MockResponse(200)
+    response.data = [
+        {
+            "self": "http://www.example.com/jira/rest/api/2/component/10000",
+            "id": "10000",
+            "name": "Component 1",
+            "description": "This is a JIRA component",
+            "lead": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "assigneeType": "PROJECT_LEAD",
+            "assignee": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "realAssigneeType": "PROJECT_LEAD",
+            "realAssignee": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "isAssigneeTypeValid": False,
+            "project": "HSP",
+            "projectId": 10000
+        },
+        {
+            "self": "http://www.example.com/jira/rest/api/2/component/10000",
+            "id": "10050",
+            "name": "PXA",
+            "description": "This is a another JIRA component",
+            "lead": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "assigneeType": "PROJECT_LEAD",
+            "assignee": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "realAssigneeType": "PROJECT_LEAD",
+            "realAssignee": {
+                "self": "http://www.example.com/jira/rest/api/2/user?username=fred",
+                "key": "fred",
+                "name": "fred",
+                "avatarUrls": {
+                    "48x48": "http://www.example.com/jira/secure/useravatar?size=large&ownerId=fred",
+                    "24x24": "http://www.example.com/jira/secure/useravatar?size=small&ownerId=fred",
+                    "16x16": "http://www.example.com/jira/secure/useravatar?size=xsmall&ownerId=fred",
+                    "32x32": "http://www.example.com/jira/secure/useravatar?size=medium&ownerId=fred"
+                },
+                "displayName": "Fred F. User",
+                "active": False
+            },
+            "isAssigneeTypeValid": False,
+            "project": "PROJECTKEY",
+            "projectId": 10000
+        }
+    ]
+    return response
+
+
 def projects():
     return [
         ('1', 'AC', 'Accountable'),

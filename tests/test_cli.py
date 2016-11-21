@@ -41,6 +41,21 @@ def test_projects():
                             '10000 - AC - Accountable\n'
 
 
+def test_project_components():
+    allow(Config).config_file.and_return(
+        '{}/tests/config.yaml'.format(os.getcwd())
+    )
+    allow(requests).get.and_return(support.project_components())
+    runner = CliRunner()
+    result = runner.invoke(cli.cli, ['projectcomponents', 'SC'])
+    assert result.exit_code == 0
+    assert result.output == \
+        '10000 - Component 1 - ' \
+        'http://www.example.com/jira/rest/api/2/component/10000\n' \
+        '10050 - PXA - ' \
+        'http://www.example.com/jira/rest/api/2/component/10000\n'
+
+
 def test_issuetypes():
     allow(Config).config_file.and_return(
         '{}/tests/config.yaml'.format(os.getcwd())

@@ -79,6 +79,9 @@ class Accountable(object):
         self._repo().checkout(branch_name)
         return issue_data
 
+    def project_components(self, project_key):
+        return self.resource.get('project/{}/components'.format(project_key))
+
     def issue_comments(self):
         return self.resource.get('issue/{}/comment'.format(self.issue_key))
 

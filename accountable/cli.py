@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from functools import update_wrapper
+from operator import itemgetter
 
 import click
 
@@ -73,6 +74,18 @@ def issuetypes(accountable, project_key):
     for key, issue_types in sorted(projects.items()):
         for i in issue_types:
             prettyprint((i['id'], key, i['name'], i['description']))
+
+
+@click.command()
+@click.argument('project_key', required=True)
+@pass_accountable
+def projectcomponents(accountable, project_key):
+    """
+    Returns a list of all a project's components.
+    {ID} - {NAME} - {SELF}
+    """
+    components = accountable.project_components(project_key)
+    prettyprint([itemgetter('id', 'name', 'self')(c) for c in components])
 
 
 def nargs(f):
@@ -233,6 +246,7 @@ cli.add_command(createissue)
 cli.add_command(users)
 cli.add_command(checkoutbranch)
 cli.add_command(checkout)
+cli.add_command(projectcomponents)
 
 
 if __name__ == '__main__':
