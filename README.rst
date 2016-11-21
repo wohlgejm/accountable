@@ -93,6 +93,16 @@ For example, if you want to start work and there isn't a ticket created for it, 
 
 This will create a new ticket and check you out to a branch. The branch name will be the newly created ticket's key followed by the slugified summary.
 
+``accountable checkout DEV-101`` will checkout a branch with the ticket's slugified summary.
+
+Aliases
+=======
+Two default aliases are configured by default:
+
+- cob -> checkoutbranch
+- co -> checkout
+
+You can set up your own custom aliases by specifying them in your config file.
 
 TODO
 ====
