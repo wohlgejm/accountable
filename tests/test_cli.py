@@ -242,13 +242,11 @@ def test_cob(mock_repo):
 
 
 @mock.patch('accountable.accountable.Accountable._repo')
-@mock.patch('accountable.accountable.Accountable.aliases')
-def test_custom_alias(mock_aliases, mock_repo):
+def test_custom_alias(mock_repo):
     allow(Config).config_file.and_return(
         '{}/tests/config.yaml'.format(os.getcwd())
     )
     allow(requests).post.and_return(support.issue_create())
-    mock_aliases.return_value = {'custom': 'checkoutbranch'}
     mock_repo.return_value = support.MockRepo()
     runner = CliRunner()
     result = runner.invoke(cli.cli,

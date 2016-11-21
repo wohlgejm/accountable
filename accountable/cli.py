@@ -15,7 +15,7 @@ class AccountableCli(click.Group):
         rv = click.Group.get_command(self, ctx, cmd_name)
         if rv is not None:
             return rv
-        alias = Accountable().aliases().get(cmd_name, None)
+        alias = Config()['aliases'].get(cmd_name, None)
         if alias is not None:
             return click.Group.get_command(self, ctx, alias)
         return None

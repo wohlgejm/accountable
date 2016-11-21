@@ -1,6 +1,7 @@
 aliases:
   co: checkout
   cob: checkoutbranch
+  custom: checkoutbranch
 domain: testdomain
 issue_fields:
 - reporter: displayName

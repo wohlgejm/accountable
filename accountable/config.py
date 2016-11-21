@@ -26,6 +26,9 @@ class Config(object):
     def __getitem__(self, name):
         return self.config[name]
 
+    def __repr__(self):
+        '{}({})'.format(self.__class__, self.config)
+
     def create(self, **kwargs):
         username = kwargs.get('username')
         password = kwargs.get('password')

@@ -13,7 +13,6 @@ from accountable.config import Config
 
 class Accountable(object):
     def __init__(self):
-        self.config = Config()
         self.issue_key = None
 
     def projects(self):
@@ -22,13 +21,9 @@ class Accountable(object):
                  project['key'],
                  project['name']) for project in metadata['projects']]
 
-    def aliases(self):
-        return self.config['aliases']
-
     @property
     def resource(self):
-        api_uri = 'https://{}/rest/api/2'.format(self.config['domain'])
-        return Resource(self.config.auth, api_uri)
+        return Resource()
 
     def issue_types(self, project_key):
         metadata = self._metadata()
@@ -51,7 +46,7 @@ class Accountable(object):
         fields = self.issue()['fields']
 
         data = OrderedDict()
-        for field in self.config['issue_fields']:
+        for field in Config()['issue_fields']:
             field_name = self._field_name(field)
             data[field_name] = self._access_field(field, fields)
         return data
@@ -154,9 +149,10 @@ class Accountable(object):
 
 
 class Resource(object):
-    def __init__(self, auth, api_uri):
-        self.auth = auth
-        self.api_uri = api_uri
+    def __init__(self):
+        self.config = Config()
+        self.auth = self.config.auth
+        self.api_uri = 'https://{}/rest/api/2'.format(self.config['domain'])
 
     def get(self, resource, params={}):
         r = requests.get('{}/{}'.format(self.api_uri, resource),
