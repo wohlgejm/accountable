@@ -11,6 +11,8 @@ Accountable - a Jira CLI
 .. image:: https://codeclimate.com/github/wohlgejm/accountable/badges/gpa.svg
    :target: https://codeclimate.com/github/wohlgejm/accountable
    :alt: Code Climate
+.. image:: https://badge.fury.io/py/accountable.svg
+    :target: https://badge.fury.io/py/accountable
 
 Never leave the command line to update a ticket again.
 
