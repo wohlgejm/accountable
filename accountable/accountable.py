@@ -49,11 +49,11 @@ class Accountable(object):
         return data
 
     def issue_create(self, options):
-        payload = Nargs(options)
+        payload = Nargs(options).__dict__()
         return self.resource.post('issue', payload)
 
     def checkout_branch(self, options):
-        payload = Nargs(options)
+        payload = Nargs(options).__dict__()
         new_issue = self.issue_create(options)
         summary = payload['fields']['summary']
         key = new_issue['key']
@@ -136,6 +136,9 @@ class Nargs(object):
 
     def __getitem__(self, key):
         return self._dict[key]
+
+    def __dict__(self):
+        return self._dict
 
     def _args_to_dict(self, args_tuple):
         d = {}
