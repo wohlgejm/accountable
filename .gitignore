@@ -16,3 +16,6 @@
 .cache
 .coverage
 .coveralls.yml
+
+# Sphinx documentation
+docs/_build/

@@ -1,5 +1,6 @@
 exclude_paths:
   - 'tests/**'
+  - 'docs/**'
 ratings:
   paths:
     - 'accountable/**'
