@@ -11,15 +11,13 @@ from doubles import no_builtin_verification, allow, expect
 import pytest
 
 from accountable import cli
-from accountable.config import Config
+from accountable import config
 from tests import support
 
 
 @pytest.fixture
 def fake_config():
-    allow(Config).config_file.and_return(
-        '{}/tests/config.yaml'.format(os.getcwd())
-    )
+    config.CONFIG_FILE = '{}/tests/config.yaml'.format(os.getcwd())
 
 
 def test_configure():
@@ -27,10 +25,10 @@ def test_configure():
         i = __import__(('builtins' if sys.version_info >= (3,)
                         else '__builtin__'))
         allow(os.path).exists.and_return(False)
-        expect(i).open.with_args(Config().config_file, 'w+').and_return(
+        expect(i).open.with_args(config.CONFIG_FILE, 'w+').and_return(
             io.BytesIO()
         )
-        expect(os).makedirs.with_args(Config.CONFIG_DIR)
+        expect(os).makedirs.with_args(config.CONFIG_DIR)
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['configure'],
                                input='user\npassowrd\ndomain\n')
@@ -87,7 +85,7 @@ class TestCommands(object):
 
     def test_issue_update(self):
         allow(requests).get.and_return(support.issue())
-        allow(Config).auth
+        allow(config.Config).auth
         expect(requests).put.and_return(support.MockResponse(204))
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'update',
@@ -127,9 +125,6 @@ class TestCommands(object):
                                  '2016-05-18T12:19:03.615+0000\n')
 
     def test_issue_worklog(self):
-        allow(Config).config_file.and_return(
-            '{}/tests/config.yaml'.format(os.getcwd())
-        )
         allow(requests).get.and_return(support.issue_worklog())
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'worklog'])
@@ -155,9 +150,6 @@ class TestCommands(object):
         assert result.output == '2 - Close Issue\n711 - QA Review\n'
 
     def test_issue_no_transitions(self):
-        allow(Config).config_file.and_return(
-            '{}/tests/config.yaml'.format(os.getcwd())
-        )
         response = support.MockResponse(200)
         response.data = {}
         allow(requests).get.and_return(response)
@@ -188,9 +180,6 @@ class TestCommands(object):
 
     @mock.patch('accountable.accountable.Accountable._repo')
     def test_checkoutbranch(self, mock_repo):
-        allow(Config).config_file.and_return(
-            '{}/tests/config.yaml'.format(os.getcwd())
-        )
         allow(requests).post.and_return(support.issue_create())
         mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
