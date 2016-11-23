@@ -5,14 +5,24 @@ import sys
 import io
 
 from click.testing import CliRunner
-import mock
 import requests
-from doubles import no_builtin_verification, allow, expect
+from doubles import (no_builtin_verification, allow, expect, ClassDouble,
+                     allow_constructor, InstanceDouble)
 import pytest
 
 from accountable import cli
 from accountable import config
+from accountable import accountable
 from tests import support
+
+
+@pytest.fixture
+def git():
+    repo = ClassDouble('accountable.accountable.Repo')
+    git = InstanceDouble('accountable.accountable.Repo')
+    git.git = support.MockRepo()
+    allow_constructor(repo).and_return(git)
+    accountable.Repo = repo
 
 
 @pytest.fixture
@@ -178,10 +188,8 @@ class TestCommands(object):
             'http://www.example.com/jira/rest/api/2/issue/10000\n'
         )
 
-    @mock.patch('accountable.accountable.Accountable._repo')
-    def test_checkoutbranch(self, mock_repo):
+    def test_checkoutbranch(self, git):
         allow(requests).post.and_return(support.issue_create())
-        mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['checkoutbranch', 'project.id', '1',
                                          'summary', 'slug me'])
@@ -191,10 +199,8 @@ class TestCommands(object):
             'http://www.example.com/jira/rest/api/2/issue/10000\n'
         )
 
-    @mock.patch('accountable.accountable.Accountable._repo')
-    def test_checkout(self, mock_repo):
+    def test_checkout(self, git):
         allow(requests).get.and_return(support.issue())
-        mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['checkout', 'TST-24'])
         assert result.exit_code == 0
@@ -203,10 +209,8 @@ class TestCommands(object):
             'http://www.example.com/jira/rest/api/2/issue/10002\n'
         )
 
-    @mock.patch('accountable.accountable.Accountable._repo')
-    def test_cob(self, mock_repo):
+    def test_cob(self, git):
         allow(requests).post.and_return(support.issue_create())
-        mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['cob', 'project.id', '1',
                                          'summary', 'slug me'])
@@ -216,10 +220,8 @@ class TestCommands(object):
             'http://www.example.com/jira/rest/api/2/issue/10000\n'
         )
 
-    @mock.patch('accountable.accountable.Accountable._repo')
-    def test_custom_alias(self, mock_repo):
+    def test_custom_alias(self, git):
         allow(requests).post.and_return(support.issue_create())
-        mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['custom', 'project.id', '1',
                                          'summary', 'slug me'])
@@ -229,10 +231,8 @@ class TestCommands(object):
             'http://www.example.com/jira/rest/api/2/issue/10000\n'
         )
 
-    @mock.patch('accountable.accountable.Accountable._repo')
-    def test_alias_not_found(self, mock_repo):
+    def test_alias_not_found(self, git):
         allow(requests).post.and_return(support.issue_create())
-        mock_repo.return_value = support.MockRepo()
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['notthere', 'project.id',
                                          '1', 'summary', 'slug me'])
