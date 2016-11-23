@@ -85,6 +85,21 @@ class TestCommands(object):
             'DESCRIPTION - example bug report\n'
         )
 
+    def test_issue_update(self):
+        allow(requests).get.and_return(support.issue())
+        allow(Config).auth
+        expect(requests).put.and_return(support.MockResponse(204))
+        runner = CliRunner()
+        result = runner.invoke(cli.cli, ['issue', 'DEV-101', 'update',
+                                         'reporter.name', 'james'])
+        assert result.exit_code == 0
+        assert result.output == (
+            'REPORTER - John Locke\nASSIGNEE - Jack Shepard\n'
+            'ISSUETYPE - Blocker\nSTATUS - In Progress\n'
+            'SUMMARY - Bug report\n'
+            'DESCRIPTION - example bug report\n'
+        )
+
     def test_issue_comments(self):
         allow(requests).get.and_return(support.comments())
         runner = CliRunner()

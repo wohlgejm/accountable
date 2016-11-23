@@ -145,6 +145,17 @@ def issue(ctx, accountable, issue_key):
 
 
 @click.command()
+@nargs
+def update(accountable, options):
+    """
+    Update an existing issue.
+    """
+    issue = accountable.issue_update(options)
+    for field, value in issue.items():
+        prettyprint((field, value))
+
+
+@click.command()
 @pass_accountable
 def comments(accountable):
     """
@@ -237,6 +248,7 @@ issue.add_command(transitions)
 issue.add_command(worklog)
 issue.add_command(addcomment)
 issue.add_command(comments)
+issue.add_command(update)
 
 cli.add_command(configure)
 cli.add_command(projects)

@@ -18,9 +18,15 @@ class Resource(object):
         return r.json()
 
     def post(self, resource, payload={}):
-        r = requests.post('{}/{}'.format(self.api_uri, resource),
-                          auth=self.auth,
-                          json=payload)
+        return self._post(resource, payload, 'post')
+
+    def put(self, resource, payload={}):
+        return self._post(resource, payload, 'put')
+
+    def _post(self, resource, payload, request_type):
+        r = getattr(requests, request_type)('{}/{}'.format(
+            self.api_uri, resource
+        ), auth=self.auth, json=payload)
         try:
             return r.json()
         except ValueError:

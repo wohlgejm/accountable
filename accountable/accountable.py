@@ -79,6 +79,12 @@ class Accountable(object):
     def project_components(self, project_key):
         return self.resource.get('project/{}/components'.format(project_key))
 
+    def issue_update(self, options):
+        payload = Nargs(options).__dict__()
+        self.resource.put('issue/{}'.format(self.issue_key),
+                          payload)
+        return self.issue_meta()
+
     def issue_comments(self):
         return self.resource.get('issue/{}/comment'.format(self.issue_key))
 
