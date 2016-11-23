@@ -29,15 +29,6 @@ class MockRepo(object):
         pass
 
 
-def config_values():
-    return {
-        'username': 'testusername',
-        'password': 'testpassword',
-        'domain': 'testdomain',
-        'create_config': True,
-    }
-
-
 def project_components():
     response = MockResponse(200)
     response.data = [
@@ -748,16 +739,3 @@ def issue_transitions():
         ]
     }
     return response
-
-
-@pytest.fixture
-def config(tmpdir, **kwargs):
-    Config.CONFIG_DIR = '{}/.accountable'.format(str(tmpdir))
-    Config.CONFIG_FILE = '{}/config.yaml'.format(Config.CONFIG_DIR)
-    return Config(**kwargs)
-
-
-@pytest.fixture
-def accountable(tmpdir):
-    Accountable.config = config(tmpdir, **config_values())
-    return Accountable()
