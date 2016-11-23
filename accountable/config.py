@@ -1,5 +1,5 @@
 import os
-
+from operator import itemgetter
 
 import click
 import yaml
@@ -27,27 +27,23 @@ class Config(object):
         self._config = None
 
     def __getitem__(self, name):
-        return self.config[name]
+        if self._config is None:
+            self._config = self._load_config()
+        return self._config[name]
 
     def __repr__(self):
-        '{}({})'.format(self.__class__, self.config)
+        '{}({})'.format(self.__class__, self._config)
 
     def create(self, **kwargs):
-        username = kwargs.get('username')
-        password = kwargs.get('password')
-        domain = kwargs.get('domain')
+        username, password, domain = itemgetter(
+            'username', 'password', 'domain'
+        )(kwargs)
         config_dict = self._config_dict(username, password, domain)
         self._create_config(config_dict)
 
     @property
     def auth(self):
         return HTTPBasicAuth(self['username'], self['password'])
-
-    @property
-    def config(self):
-        if self._config is None:
-            self._config = self._load_config()
-        return self._config
 
     def _load_config(self):
         with open(CONFIG_FILE, 'r') as f:
