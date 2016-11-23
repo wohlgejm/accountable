@@ -137,12 +137,6 @@ class Nargs(object):
     def __init__(self, options):
         self._dict = self._args_to_dict(options)
 
-    def __repr__(self):
-        return repr(self._dict)
-
-    def __getitem__(self, key):
-        return self._dict[key]
-
     def __dict__(self):
         return self._dict
 
