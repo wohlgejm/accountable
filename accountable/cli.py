@@ -48,7 +48,7 @@ def configure(username, password, domain):
     Initial configuration. Used to specify your username, password and domain.
     Configuration is stored in ~/.accountable/config.yaml.
     """
-    Config().create(username=username, password=password, domain=domain)
+    Config(username=username, password=password, domain=domain)
 
 
 @click.command()

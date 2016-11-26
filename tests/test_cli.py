@@ -35,6 +35,7 @@ def test_configure():
         i = __import__(('builtins' if sys.version_info >= (3,)
                         else '__builtin__'))
         allow(os.path).exists.and_return(False)
+        allow(os.path).isfile.and_return(False)
         expect(i).open.with_args(config.CONFIG_FILE, 'w+').and_return(
             io.BytesIO()
         )
