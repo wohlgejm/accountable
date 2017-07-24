@@ -48,6 +48,15 @@ def configure(username, password, domain):
     Initial configuration. Used to specify your username, password and domain.
     Configuration is stored in ~/.accountable/config.yaml.
     """
+    art = r'''
+Welcome!                                __        ___.   .__
+_____    ____  ____  ____  __ __  _____/  |______ \_ |__ |  |   ____
+\__  \ _/ ___\/ ___\/  _ \|  |  \/    \   __\__  \ | __ \|  | _/ __ \
+ / __ \\  \__\  \__(  <_> )  |  /   |  \  |  / __ \| \_\ \  |_\  ___/
+(____  /\___  >___  >____/|____/|___|  /__| (____  /___  /____/\___  >
+     \/     \/    \/                 \/          \/    \/          \/
+     '''
+    click.secho(art, fg='blue')
     Config(username=username, password=password, domain=domain)
 
 

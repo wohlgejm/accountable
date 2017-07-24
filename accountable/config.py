@@ -55,9 +55,12 @@ class Config(UserDict, object):
         with open(CONFIG_FILE, 'w+') as f:
             f.write(yaml.dump(self.data, default_flow_style=False,
                               encoding='utf-8'))
-        click.echo('Configuration file written to {}'.format(CONFIG_FILE))
+        click.secho(
+            'Configuration file written to {}'.format(CONFIG_FILE),
+            fg='blue'
+        )
 
     def _create_config_dir(self):
         if not os.path.exists(CONFIG_DIR):
-            click.echo('Creating {}'.format(CONFIG_DIR))
+            click.secho('Creating {}'.format(CONFIG_DIR), fg='blue')
             os.makedirs(CONFIG_DIR)
