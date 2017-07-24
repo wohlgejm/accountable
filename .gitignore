@@ -5,8 +5,11 @@
 /*.egg-info
 /build
 
-*.swp
-*.swo
+# swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
 
 # Virtualenv folder
 /venv
