@@ -9,6 +9,7 @@ from slugify import slugify
 
 from accountable.config import Config
 from accountable.resource import Resource
+from accountable.nargs import nargs_to_dict
 
 
 class Accountable(object):
@@ -49,11 +50,11 @@ class Accountable(object):
         return data
 
     def issue_create(self, options):
-        payload = Nargs(options).__dict__()
+        payload = nargs_to_dict(options)
         return self.resource.post('issue', payload)
 
     def checkout_branch(self, options):
-        payload = Nargs(options).__dict__()
+        payload = nargs_to_dict(options)
         new_issue = self.issue_create(options)
         summary = payload['fields']['summary']
         key = new_issue['key']
@@ -80,7 +81,7 @@ class Accountable(object):
         return self.resource.get('project/{}/components'.format(project_key))
 
     def issue_update(self, options):
-        payload = Nargs(options).__dict__()
+        payload = nargs_to_dict(options)
         self.resource.put('issue/{}'.format(self.issue_key),
                           payload)
         return self.issue_meta()
@@ -131,28 +132,3 @@ class Accountable(object):
             return field.upper()
         else:
             return list(field.keys())[0].upper()
-
-
-class Nargs(object):
-    def __init__(self, options):
-        self._dict = self._args_to_dict(options)
-
-    def __dict__(self):
-        return self._dict
-
-    def _args_to_dict(self, args_tuple):
-        d = {}
-        for arg in zip(args_tuple[0::2], args_tuple[1::2]):
-            keys = arg[0].split('.')
-            self._set_nested_key(keys, arg[1], d)
-        return {'fields': d}
-
-    def _set_nested_key(self, key, value, d):
-        if isinstance(key, list) and len(key) > 1:
-            head, tail = key[0], key[1:]
-            if not d.get(head):
-                d[head] = {}
-            self._set_nested_key(tail, value, d[head])
-        else:
-            d[list(key)[0]] = value
-        return d
