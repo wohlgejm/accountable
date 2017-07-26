@@ -1,7 +1,5 @@
 from __future__ import absolute_import
-from __future__ import unicode_literals
 
-from collections import OrderedDict
 import os
 
 from git import Repo
@@ -9,7 +7,7 @@ from slugify import slugify
 
 from accountable.config import Config
 from accountable.resource import Resource
-from accountable.nargs import nargs_to_dict
+from accountable.utils import nargs_to_dict, reshape, flatten
 
 
 class Accountable(object):
@@ -41,13 +39,10 @@ class Accountable(object):
         return self.resource.get('issue/{}'.format(self.issue_key))
 
     def issue_meta(self):
-        fields = self.issue()['fields']
-
-        data = OrderedDict()
-        for field in Config()['issue_fields']:
-            field_name = self._field_name(field)
-            data[field_name] = self._access_field(field, fields)
-        return data
+        data = self.issue()
+        return flatten(
+            reshape({'fields': Config().issue_schema()}, data)['fields']
+        )
 
     def issue_create(self, options):
         payload = nargs_to_dict(options)
@@ -114,21 +109,3 @@ class Accountable(object):
 
     def _repo(self):
         return Repo(os.getcwd()).git
-
-    @staticmethod
-    def _access_field(field, d):
-        if isinstance(field, str):
-            return d[field]
-        elif isinstance(field, dict):
-            value = d[list(field.keys())[0]]
-            return Accountable._access_field(list(field.values())[0], value)
-        else:
-            raise TypeError('There is an issue with your issue field'
-                            'configuration.')
-
-    @staticmethod
-    def _field_name(field):
-        if isinstance(field, str):
-            return field.upper()
-        else:
-            return list(field.keys())[0].upper()

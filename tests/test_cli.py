@@ -82,20 +82,20 @@ class TestCommands(object):
         assert result.exit_code == 0
         assert result.output == '1 - AC - Bug - An error in the code\n'
 
-    def test_issue(self):
-        allow(requests).get.and_return(support.issue())
+    def test_issue(self, get_issue):
         runner = CliRunner()
         result = runner.invoke(cli.cli, ['issue', 'DEV-101'])
+        print(result)
         assert result.exit_code == 0
         assert result.output == (
-            'REPORTER - John Locke\nASSIGNEE - Jack Shepard\n'
-            'ISSUETYPE - Blocker\nSTATUS - In Progress\n'
-            'SUMMARY - Bug report\n'
+            'ASSIGNEE-DISPLAYNAME - Jack Shepard\n'
             'DESCRIPTION - example bug report\n'
+            'REPORTER-DISPLAYNAME - John Locke\n'
+            'STATUS-STATUSCATEGORY-NAME - In Progress\n'
+            'SUMMARY - Bug report\n'
         )
 
-    def test_issue_update(self):
-        allow(requests).get.and_return(support.issue())
+    def test_issue_update(self, get_issue):
         allow(config.Config).auth
         expect(requests).put.and_return(support.MockResponse(204))
         runner = CliRunner()
@@ -103,10 +103,11 @@ class TestCommands(object):
                                          'reporter.name', 'james'])
         assert result.exit_code == 0
         assert result.output == (
-            'REPORTER - John Locke\nASSIGNEE - Jack Shepard\n'
-            'ISSUETYPE - Blocker\nSTATUS - In Progress\n'
-            'SUMMARY - Bug report\n'
+            'ASSIGNEE-DISPLAYNAME - Jack Shepard\n'
             'DESCRIPTION - example bug report\n'
+            'REPORTER-DISPLAYNAME - John Locke\n'
+            'STATUS-STATUSCATEGORY-NAME - In Progress\n'
+            'SUMMARY - Bug report\n'
         )
 
     def test_issue_comments(self):

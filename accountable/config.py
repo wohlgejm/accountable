@@ -38,6 +38,15 @@ class Config(UserDict, object):
         self.data.setdefault('issue_fields', DEFAULT_ISSUE_FIELDS)
         self._save()
 
+    def issue_schema(self):
+        schema = {}
+        for field in self['issue_fields']:
+            if isinstance(field, str):
+                schema[field] = None
+            else:
+                schema.update(field)
+        return schema
+
     @property
     def auth(self):
         return HTTPBasicAuth(self['username'], self['password'])
