@@ -2,7 +2,46 @@ from __future__ import absolute_import
 
 from collections import OrderedDict
 
-from accountable.utils import reshape
+from accountable.utils import reshape, nargs_to_dict
+
+
+def test_nargs_to_dict():
+    options = (
+        'project.id', '11900', 'issuetype.id', '7',
+        'summary', 'a summary'
+    )
+    assert nargs_to_dict(options) == {
+        'fields': {
+            'project': {
+                'id': 11900
+            },
+            'issuetype': {
+                'id': 7
+            },
+            'summary': 'a summary'
+        }
+    }
+
+
+def test_nargs_to_dict_eval():
+    options = (
+        'project.id', '11900',
+        'issuetype.id', '7',
+        'summary', 'a summary',
+        'labels', '["engineering"]'
+    )
+    assert nargs_to_dict(options) == {
+        'fields': {
+            'project': {
+                'id': 11900
+            },
+            'issuetype': {
+                'id': 7
+            },
+            'summary': 'a summary',
+            'labels': ['engineering']
+        }
+    }
 
 
 def test_reshape():

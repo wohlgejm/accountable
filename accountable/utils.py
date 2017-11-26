@@ -7,6 +7,7 @@ except ImportError:
     from collections.abc import MutableSequence, MutableMapping
 from collections import OrderedDict
 import ast
+from functools import reduce
 
 
 def reshape(schema, data):
@@ -41,23 +42,19 @@ def reshape(schema, data):
 
 
 def nargs_to_dict(nargs):
-    d = {}
-    for arg in zip(nargs[0::2], nargs[1::2]):
-        key, value = arg
-        parsed_value = eval_value(value)
-        rec_nargs_to_dict(key, parsed_value, d)
+    args = zip(nargs[0::2], nargs[1::2])
+    d = reduce(rec_nargs_to_dict, args, {})
     return {'fields': d}
 
 
-def rec_nargs_to_dict(key, value, d):
-    if isinstance(key, MutableSequence):
-        keys = key.split('.')
-        head, tail = keys[0], keys[1:]
-        if not d.get(head):
-            d[head] = {}
-        rec_nargs_to_dict(tail, value, d[head])
-    d[key] = value
-    return d
+def rec_nargs_to_dict(accum, kv):
+    k, v = kv
+    keys = k.split('.')
+    if len(keys) > 1:
+        accum[keys[0]] = rec_nargs_to_dict({}, (keys[1], eval_value(v)))
+    else:
+        accum[keys[0]] = eval_value(v)
+    return accum
 
 
 def eval_value(value):
