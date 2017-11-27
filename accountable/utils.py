@@ -9,6 +9,8 @@ from collections import OrderedDict
 import ast
 from functools import reduce
 
+from inflection import underscore
+
 
 def reshape(schema, data):
     reshaped = [] if isinstance(schema, MutableSequence) else OrderedDict()
@@ -64,10 +66,14 @@ def eval_value(value):
         return value
 
 
-def flatten(d, parent_key='', sep='-'):
+def flatten(d, parent_key='', sep='_'):
     items = []
     for k, v in d.items():
-        new_key = (parent_key + sep + k if parent_key else k).upper()
+        new_key = (
+            underscore(parent_key) +
+            sep +
+            underscore(k) if parent_key else underscore(k)
+        )
         if isinstance(v, MutableMapping):
             items.extend(flatten(v, new_key, sep=sep).items())
         else:

@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 
 import os
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urlencode
 
 from git import Repo
 from slugify import slugify
@@ -48,6 +52,22 @@ class Accountable(object):
         payload = nargs_to_dict(options)
         return self.resource.post('issue', payload)
 
+    def create_meta(self, project_key, issue_type):
+        params = {
+            'expand': 'projects.issuetypes.fields',
+            'projectKeys': project_key,
+            'issuetypeNames': issue_type
+        }
+        params = dict((k, v) for k, v in params.iteritems() if v)
+        root = 'issue/createmeta'
+        metadata = self.resource.get(
+            '{}?{}'.format(
+                root,
+                urlencode(params)
+            )
+        ).get('projects')
+        return [flatten(p) for p in metadata]
+
     def checkout_branch(self, options):
         payload = nargs_to_dict(options)
         new_issue = self.issue_create(options)
@@ -82,14 +102,23 @@ class Accountable(object):
         return self.issue_meta()
 
     def issue_comments(self):
-        return self.resource.get('issue/{}/comment'.format(self.issue_key))
+        comments = self.resource.get('issue/{}/comment'.format(self.issue_key))
+        if comments.get('comments'):
+            return [flatten(comment) for comment in comments['comments']]
+        return None
 
     def issue_add_comment(self, body):
-        return self.resource.post('issue/{}/comment'.format(self.issue_key),
-                                  {'body': body})
+        comment = self.resource.post(
+            'issue/{}/comment'.format(self.issue_key),
+            {'body': body}
+        )
+        return flatten(comment)
 
     def issue_worklog(self):
-        return self.resource.get('issue/{}/worklog'.format(self.issue_key))
+        worklog = self.resource.get('issue/{}/worklog'.format(self.issue_key))
+        if worklog.get('worklogs'):
+            return [flatten(w) for w in worklog.get('worklogs')]
+        return None
 
     def issue_transitions(self):
         return self.resource.get(
@@ -105,7 +134,9 @@ class Accountable(object):
     def users(self, query):
         payload = self.resource.get('user/search',
                                     params={'username': query})
-        return payload
+        if payload:
+            return [flatten(user) for user in payload]
+        return None
 
     def _repo(self):
         return Repo(os.getcwd()).git

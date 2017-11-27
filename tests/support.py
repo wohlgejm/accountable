@@ -34,8 +34,8 @@ def project_components():
     response.data = [
         {
             "self": "http://www.example.com/jira/rest/api/2/component/10000",
-            "id": "10000",
-            "name": "Component 1",
+            "id": "10001",
+            "name": "Component1",
             "description": "This is a JIRA component",
             "lead": {
                 "self": "http://www.example.com/jira/rest/api/2/user?username=fred",

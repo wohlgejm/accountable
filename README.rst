@@ -95,6 +95,14 @@ This will create a new ticket and check you out to a branch. The branch name wil
 
 ``accountable checkout DEV-101`` will checkout a branch with the ticket's slugified summary.
 
+Autocompletion
+==============
+Add the following to your .bashrc file:
+
+```
+eval "$(_ACCOUNTABLE_COMPLETE=source accountable)"
+```
+
 Aliases
 =======
 Two default aliases are configured by default:
@@ -103,11 +111,6 @@ Two default aliases are configured by default:
 - co -> checkout
 
 You can set up your own custom aliases by specifying them in your config file.
-
-TODO
-====
-- Using with pomodoro
-- OAuth
 
 Why?
 ====
@@ -120,7 +123,7 @@ Here's where I get frustrated with Jira:
 
 - I need to add a comment to a story for the product manager. Opening the browser to do this this breaks my concentration.
 - I start work locally and don't push up a branch immediately. This doesn't trigger an automated transition.
-- I don't like smart commit messages. Commit messages should reference the issue and be a concise, grepable implentation note for your fellow developers. Smart commits muck up the history.
+- I don't like smart commit messages. Commit messages should reference the issue and be a concise, grepable implementation note for your fellow developers. Smart commits muck up the history.
 - I start a story and realize that a refactor, usually to allow for extension, is required before work on the requirements can start. The refactor should be in it's own pull request, so I forget to create a ticket and that work goes untracked.
 
 Paired with git, this project attempts to solve these issues.

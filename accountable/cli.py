@@ -2,8 +2,10 @@ from __future__ import absolute_import
 
 from functools import update_wrapper
 from operator import itemgetter
+import textwrap
 
 import click
+from terminaltables import SingleTable
 
 from accountable.accountable import Accountable, Config
 
@@ -22,12 +24,16 @@ class AccountableCli(click.Group):
         return None
 
 
-def prettyprint(output):
-    if isinstance(output, list):
-        for i in output:
-            click.echo(' - '.join([x for x in i]))
-    else:
-        click.echo(' - '.join([x for x in output]))
+def print_table(table):
+    for row_idx, row in enumerate(table.table_data):
+        for col_idx, _col in enumerate(row):
+            max_width = table.column_max_width(col_idx)
+            datum = table.table_data[row_idx][col_idx]
+            if max_width > 0 and len(str(datum)) >= max_width:
+                table.table_data[row_idx][col_idx] = '\n'.join(
+                    textwrap.wrap(datum, max_width)
+                )
+    click.echo(table.table)
 
 
 @click.group(cls=AccountableCli)
@@ -66,9 +72,11 @@ def projects(accountable):
     """
     List all projects.
     """
-    projects = accountable.metadata()
-    prettyprint([itemgetter('id', 'key', 'name')(p)
-                 for p in projects['projects']])
+    projects = accountable.metadata()['projects']
+    headers = sorted(['id', 'key', 'self'])
+    rows = [[v for k, v in sorted(p.items()) if k in headers] for p in projects]
+    rows.insert(0, headers)
+    print_table(SingleTable(rows))
 
 
 @click.command()
@@ -80,21 +88,31 @@ def issuetypes(accountable, project_key):
     project.
     """
     projects = accountable.issue_types(project_key)
+    headers = sorted(['id', 'name', 'description'])
+    rows = []
     for key, issue_types in sorted(projects.items()):
-        for i in issue_types:
-            prettyprint((i['id'], key, i['name'], i['description']))
+        for issue_type in issue_types:
+            rows.append(
+                [key] + [v for k, v in sorted(issue_type.items())
+                         if k in headers]
+            )
+    rows.insert(0, ['project_key'] + headers)
+    print_table(SingleTable(rows))
 
 
 @click.command()
 @click.argument('project_key', required=True)
 @pass_accountable
-def projectcomponents(accountable, project_key):
+def components(accountable, project_key):
     """
     Returns a list of all a project's components.
-    {ID} - {NAME} - {SELF}
     """
     components = accountable.project_components(project_key)
-    prettyprint([itemgetter('id', 'name', 'self')(c) for c in components])
+    headers = sorted(['id', 'name', 'self'])
+    rows = [[v for k, v in sorted(component.items()) if k in headers]
+            for component in components]
+    rows.insert(0, headers)
+    print_table(SingleTable(rows))
 
 
 def nargs(f):
@@ -107,13 +125,42 @@ def nargs(f):
 
 
 @click.command()
+@click.argument('project_key', required=True)
+@click.argument('issue_type', required=False)
+@pass_accountable
+def createmeta(accountable, project_key, issue_type=None):
+    """
+    Create new issue.
+    """
+    metadata = accountable.create_meta(project_key, issue_type)
+    headers = [
+        'project_key', 'issuetype_name', 'field_key', 'field_name', 'required'
+    ]
+    rows = [headers]
+    for project in metadata:
+        key = project['key']
+        issuetypes = project['issuetypes']
+        for issuetype in issuetypes:
+            name = issuetype['name']
+            fields = issuetype['fields']
+            for k, v in fields.items():
+                field_key = k
+                field_name = v['name']
+                required = v['required']
+                rows.append([key, name, field_key, field_name, required])
+    print_table(SingleTable(rows))
+
+
+@click.command()
 @nargs
 def createissue(accountable, options):
     """
     Create new issue.
     """
     issue = accountable.issue_create(options)
-    prettyprint((issue['id'], issue['key'], issue['self']))
+    headers = sorted(['id', 'key', 'self'])
+    rows = [headers, [itemgetter(header)(issue) for header in headers]]
+    print_table(SingleTable(rows))
 
 
 @click.command()
@@ -123,7 +170,9 @@ def checkoutbranch(accountable, options):
     Create a new issue and checkout a branch named after it.
     """
     issue = accountable.checkout_branch(options)
-    prettyprint((issue['id'], issue['key'], issue['self']))
+    headers = sorted(['id', 'key', 'self'])
+    rows = [headers, [itemgetter(header)(issue) for header in headers]]
+    print_table(SingleTable(rows))
 
 
 @click.command()
@@ -134,7 +183,9 @@ def checkout(accountable, issue_key):
     Checkout a new branch or checkout to a branch for a given issue.
     """
     issue = accountable.checkout(issue_key)
-    prettyprint((issue['id'], issue['key'], issue['self']))
+    headers = issue.keys()
+    rows = [headers, [v for k, v in issue.items()]]
+    print_table(SingleTable(rows))
 
 
 @click.group(invoke_without_command=True)
@@ -143,14 +194,14 @@ def checkout(accountable, issue_key):
 @click.pass_context
 def issue(ctx, accountable, issue_key):
     """
-    List metadata for a given issue key. Issue keys should take the format of
-    {PROJECT-ID}-{ISSUE-ID}.
+    List metadata for a given issue key.
     """
     accountable.issue_key = issue_key
     if not ctx.invoked_subcommand:
         issue = accountable.issue_meta()
-        for field, value in issue.items():
-            prettyprint((field, value))
+        headers = issue.keys()
+        rows = [headers, [v for k, v in issue.items()]]
+        print_table(SingleTable(rows))
 
 
 @click.command()
@@ -160,8 +211,9 @@ def update(accountable, options):
     Update an existing issue.
     """
     issue = accountable.issue_update(options)
-    for field, value in issue.items():
-        prettyprint((field, value))
+    headers = issue.keys()
+    rows = [headers, [v for k, v in issue.items()]]
+    print_table(SingleTable(rows))
 
 
 @click.command()
@@ -170,15 +222,18 @@ def comments(accountable):
     """
     Lists all comments for a given issue key.
     """
-    comments = accountable.issue_comments().get('comments')
+    comments = accountable.issue_comments()
+    headers = sorted(['author_name', 'body', 'updated'])
+
     if comments:
-        for c in comments:
-            prettyprint((c['id'], c['author']['name'], c['body'],
-                         c['created']))
+        rows = [[v for k, v in sorted(c.items()) if k in headers]
+                for c in comments]
+        rows.insert(0, headers)
+        print_table(SingleTable(rows))
     else:
-        prettyprint(('No comments found for {}'.format(
-            accountable.issue_key), )
-        )
+        click.secho('No comments found for {}'.format(
+            accountable.issue_key
+        ), fg='red')
 
 
 @click.command()
@@ -189,8 +244,12 @@ def addcomment(accountable, body):
     Add a comment to the given issue key. Accepts a body argument to be used
     as the comment's body.
     """
+
     r = accountable.issue_add_comment(body)
-    prettyprint((r['author']['name'], r['body'], r['created']))
+    headers = sorted(['author_name', 'body', 'updated'])
+    rows = [[v for k, v in sorted(r.items()) if k in headers]]
+    rows.insert(0, headers)
+    print_table(SingleTable(rows))
 
 
 @click.command()
@@ -199,15 +258,18 @@ def worklog(accountable):
     """
     List all worklogs for a given issue key.
     """
-    worklog = accountable.issue_worklog().get('worklogs')
+    worklog = accountable.issue_worklog()
+    headers = ['author_name', 'comment', 'time_spent']
     if worklog:
-        for w in worklog:
-            prettyprint(('Author', w['author']['name']))
-            prettyprint(('Comment', w.get('comment')))
-            prettyprint(('Time spent', w['timeSpent']))
+        rows = [[v for k, v in sorted(w.items()) if k in headers]
+                for w in worklog]
+        rows.insert(0, headers)
+        print_table(SingleTable(rows))
     else:
-        prettyprint(('No worklogs found for {}'.format(accountable.issue_key),
-                     ))
+        click.secho(
+            'No worklogs found for {}'.format(accountable.issue_key),
+            fg='red'
+        )
 
 
 @click.command()
@@ -217,13 +279,17 @@ def transitions(accountable):
     List all possible transitions for a given issue.
     """
     transitions = accountable.issue_transitions().get('transitions')
+    headers = ['id', 'name']
     if transitions:
-        for t in transitions:
-            prettyprint((t['id'], t['name']))
+        rows = [[v for k, v in sorted(t.items()) if k in headers]
+                for t in transitions]
+        rows.insert(0, headers)
+        print_table(SingleTable(rows))
     else:
-        prettyprint(('No transitions found for {}'.format(
-            accountable.issue_key),
-        ))
+        click.secho(
+            'No transitions found for {}'.format(accountable.issue_key),
+            fg='red'
+        )
 
 
 @click.command()
@@ -236,9 +302,10 @@ def dotransition(accountable, transition_id):
     """
     t = accountable.issue_do_transition(transition_id)
     if t.status_code == 204:
-        prettyprint((
+        click.secho(
             'Successfully transitioned {}'.format(accountable.issue_key),
-        ))
+            fg='green'
+        )
 
 
 @click.command()
@@ -249,7 +316,16 @@ def users(accountable, query):
     Executes a user search for the given query.
     """
     users = accountable.users(query)
-    prettyprint([(user['key'], user['displayName']) for user in users])
+    headers = ['display_name', 'key']
+    if users:
+        rows = [[v for k, v in sorted(u.items()) if k in headers]
+                for u in users]
+        rows.insert(0, headers)
+        print_table(SingleTable(rows))
+    else:
+        click.secho('No users found for query {}'.format(
+            query
+        ), fg='red')
 
 
 issue.add_command(dotransition)
@@ -267,7 +343,8 @@ cli.add_command(createissue)
 cli.add_command(users)
 cli.add_command(checkoutbranch)
 cli.add_command(checkout)
-cli.add_command(projectcomponents)
+cli.add_command(components)
+cli.add_command(createmeta)
 
 
 if __name__ == '__main__':

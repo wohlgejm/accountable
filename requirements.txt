@@ -10,3 +10,5 @@ requests==2.18.4
 smmap2==2.0.3
 Unidecode==0.4.21
 urllib3==1.22
+terminaltables==3.1.0
+inflection==0.3.1
